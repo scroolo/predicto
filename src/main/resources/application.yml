@@ -35,6 +35,17 @@ spring:
         max-idle: 8
         min-idle: 0
 
+cito:
+  api:
+    mock-enabled: true
+    base-url: https://api.citoapi.com/api/v1
+    api-key: ${CITO_API_KEY:}
+  sync:
+    catalog-interval-ms: 43200000
+    schedule-interval-ms: 1800000
+    result-interval-ms: 300000
+    lock-interval-ms: 60000
+
 management:
   endpoints:
     web:

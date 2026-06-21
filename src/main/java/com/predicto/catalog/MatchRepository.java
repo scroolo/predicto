@@ -19,4 +19,8 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
     List<Match> findByLeagueIdAndStatus(UUID leagueId, MatchStatus status);
 
     Optional<Match> findByExternalId(String externalId);
+
+    List<Match> findByStatusAndStartsAtLessThanEqual(MatchStatus status, OffsetDateTime threshold);
+
+    List<Match> findByStartsAtLessThanEqualAndStatusNotIn(OffsetDateTime startsAt, List<MatchStatus> statuses);
 }
