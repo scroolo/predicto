@@ -1,3 +1,4 @@
+# Cache bust: 2026-06-24-v2
 FROM node:22-alpine AS builder
 WORKDIR /build
 COPY package.json package-lock.json ./
