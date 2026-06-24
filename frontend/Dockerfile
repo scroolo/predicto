@@ -1,4 +1,4 @@
-# Cache bust: 2026-06-24-v5
+# Cache bust: 2026-06-24-v6
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -7,7 +7,8 @@ COPY . .
 RUN npm run build
 
 FROM nginx:alpine
+RUN rm /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
-CMD ["/bin/sh", "-c", "envsubst '${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["nginx", "-g", "daemon off;"]
