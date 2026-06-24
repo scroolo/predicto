@@ -16,7 +16,7 @@ COPY backend/src ./src
 COPY --from=frontend-builder /frontend/dist ./src/main/resources/static
 RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests
-RUN jar tf target/predicto-0.0.1-SNAPSHOT.jar | grep "static/assets" | head -3 || echo "NO ASSETS FOUND"
+RUN jar tf target/predicto-0.0.1-SNAPSHOT.jar | grep "\.js$" | head -3 || echo "NO JS FILES FOUND"
 
 # Stage 3 — Run
 FROM eclipse-temurin:21-jre
