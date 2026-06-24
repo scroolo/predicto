@@ -65,19 +65,10 @@ public class DiscordController {
         var result = discordAuthService.loginOrRegister(discordProfile);
 
         String token = result.token();
-        ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite(cookieSameSite)
-                .path("/")
-                .maxAge(Duration.ofDays(7))
-                .build();
-
-        log.info("Discord callback - Setting cookie: {}", cookie);
+        log.info("Discord callback - redirecting with token");
 
         return ResponseEntity.status(HttpStatus.FOUND)
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .location(URI.create(frontendUrl + "/dashboard"))
+                .location(URI.create(frontendUrl + "/auth/callback?token=" + token))
                 .build();
     }
 
