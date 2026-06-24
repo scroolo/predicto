@@ -48,10 +48,11 @@ public class SecurityConfig {
             )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/me", "/api/auth/discord", "/api/auth/discord/callback").permitAll()
                 .requestMatchers("/api/health").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/leagues", "/api/matches").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/matches/*/odds").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/seasons", "/api/seasons/active").permitAll()
