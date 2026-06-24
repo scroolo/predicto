@@ -37,11 +37,11 @@ public class SecurityConfig {
             .cors(c -> c.configurationSource(corsSource()))
             .csrf(csrf -> csrf.disable())
             .headers(h -> h
+                .contentTypeOptions(opt -> opt.disable())
                 .addHeaderWriter((request, response) -> {
                     // response.setHeader("Content-Security-Policy",
                     //     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self' https://discord.com; frame-ancestors 'none'");
                     response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-                    response.setHeader("X-Content-Type-Options", "nosniff");
                     response.setHeader("X-Frame-Options", "DENY");
                     response.setHeader("X-XSS-Protection", "1; mode=block");
                 })
