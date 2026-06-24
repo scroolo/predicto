@@ -48,7 +48,21 @@ public class SecurityConfig {
             )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/index.html", "/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.webp", "/*.woff", "/*.woff2").permitAll()
+                .requestMatchers(
+                    "/",
+                    "/index.html",
+                    "/assets/**",
+                    "/*.js",
+                    "/*.css",
+                    "/*.ico",
+                    "/*.png",
+                    "/*.svg",
+                    "/*.webp",
+                    "/*.woff2",
+                    "/*.woff",
+                    "/*.ttf",
+                    "/*.map"
+                ).permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()

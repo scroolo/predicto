@@ -16,13 +16,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**")
             .addResourceLocations("classpath:/static/")
+            .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(new PathResourceResolver() {
                 @Override
                 protected Resource getResource(String resourcePath, Resource location) throws IOException {
-                    Resource resource = location.createRelative(resourcePath);
-                    return resource.exists() && resource.isReadable() ? resource
-                        : new ClassPathResource("/static/index.html");
+                    Resource requested = location.createRelative(resourcePath);
+                    if (requested.exists() && requested.isReadable()) return requested;
+                    return new ClassPathResource("/static/index.html");
                 }
             });
     }
