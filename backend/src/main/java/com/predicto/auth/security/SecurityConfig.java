@@ -85,6 +85,7 @@ public class SecurityConfig {
     private CorsConfigurationSource corsSource() {
         var config = new CorsConfiguration();
         config.setAllowedOrigins(allowedOrigins);
+        config.addAllowedOrigin("https://predicto-frontend-production.up.railway.app");
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
