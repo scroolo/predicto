@@ -38,8 +38,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .headers(h -> h
                 .addHeaderWriter((request, response) -> {
-                    response.setHeader("Content-Security-Policy",
-                        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self' https://discord.com; frame-ancestors 'none'");
+                    // response.setHeader("Content-Security-Policy",
+                    //     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; font-src 'self'; connect-src 'self' https://discord.com; frame-ancestors 'none'");
                     response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
                     response.setHeader("X-Content-Type-Options", "nosniff");
                     response.setHeader("X-Frame-Options", "DENY");
@@ -48,22 +48,10 @@ public class SecurityConfig {
             )
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/",
-                    "/index.html",
-                    "/assets/**",
-                    "/*.js",
-                    "/*.css",
-                    "/*.ico",
-                    "/*.png",
-                    "/*.svg",
-                    "/*.webp",
-                    "/*.woff2",
-                    "/*.woff",
-                    "/*.ttf",
-                    "/*.map"
-                ).permitAll()
                 .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/assets/**").permitAll()
+                .requestMatchers("/", "/index.html").permitAll()
+                .requestMatchers("/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.webp", "/*.woff2", "/*.woff", "/*.ttf", "/*.map").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/auth/me", "/api/auth/discord", "/api/auth/discord/callback").permitAll()
