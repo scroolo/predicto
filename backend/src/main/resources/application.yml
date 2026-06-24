@@ -5,7 +5,7 @@ server:
 
 app:
   cookie:
-    secure: ${APP_COOKIE_SECURE:false}
+    secure: ${APP_COOKIE_SECURE:true}
     same-site: ${COOKIE_SAME_SITE:Lax}
 
 spring:
