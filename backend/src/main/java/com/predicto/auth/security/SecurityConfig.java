@@ -73,7 +73,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/leagues/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/seasons/**").permitAll()
                 .requestMatchers("/api/users/me/**").authenticated()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(jwtAuthFilter, RateLimitFilter.class);
