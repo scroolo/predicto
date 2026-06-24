@@ -9,6 +9,11 @@ app:
     same-site: ${COOKIE_SAME_SITE:Lax}
 
 spring:
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
+
   servlet:
     multipart:
       max-request-size: 1MB
