@@ -1,13 +1,13 @@
-# Cache bust: 2026-06-24-v2
-FROM node:22-alpine AS builder
-WORKDIR /build
-COPY package.json package-lock.json ./
+# Cache bust: 2026-06-24-v3
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
 RUN npm ci
 COPY . .
-ARG VITE_API_BASE_URL=""
-RUN VITE_API_BASE_URL=$VITE_API_BASE_URL npm run build
+RUN npm run build
 
 FROM nginx:alpine
-COPY --from=builder /build/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/templates/default.conf.template
+EXPOSE 8080
+CMD ["/bin/sh", "-c", "envsubst '$PORT' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
