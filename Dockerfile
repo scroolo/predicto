@@ -1,6 +1,6 @@
 # Stage 1 — Build frontend
 FROM node:20-alpine AS frontend-builder
-WORKDIR /app/frontend
+WORKDIR /frontend
 COPY frontend/package*.json ./
 RUN npm ci
 COPY frontend/ .
@@ -13,9 +13,10 @@ FROM eclipse-temurin:21-jdk AS backend-builder
 WORKDIR /app
 COPY backend/pom.xml .
 COPY backend/src ./src
-COPY --from=frontend-builder /app/frontend/dist ./src/main/resources/static
+COPY --from=frontend-builder /frontend/dist ./src/main/resources/static
 RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests
+RUN jar tf target/predicto-0.0.1-SNAPSHOT.jar | grep "static" | head -5 || echo "NO STATIC FILES FOUND"
 
 # Stage 3 — Run
 FROM eclipse-temurin:21-jre
