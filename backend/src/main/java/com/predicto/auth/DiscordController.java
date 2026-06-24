@@ -1,6 +1,7 @@
 package com.predicto.auth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth/discord")
 @RequiredArgsConstructor
+@Slf4j
 public class DiscordController {
 
     private final DiscordAuthService discordAuthService;
@@ -70,6 +72,8 @@ public class DiscordController {
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();
+
+        log.info("Discord callback - Setting cookie: {}", cookie);
 
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())

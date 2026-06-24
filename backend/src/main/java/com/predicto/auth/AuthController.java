@@ -81,6 +81,8 @@ public class AuthController {
                 .maxAge(Duration.ofDays(7))
                 .build();
 
+        log.info("Register - Setting cookie: {}", cookie);
+
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(Map.of("userId", user.getId(), "username", user.getUsername(), "role", user.getRole().name()));
@@ -101,6 +103,8 @@ public class AuthController {
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();
+
+        log.info("Login - Setting cookie: {}", cookie);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
