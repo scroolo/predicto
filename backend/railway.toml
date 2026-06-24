@@ -4,6 +4,4 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "java -jar target/predicto-0.0.1-SNAPSHOT.jar"
-healthcheckPath = "/actuator/health"
-healthcheckTimeout = 120
 restartPolicyType = "on_failure"
