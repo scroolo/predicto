@@ -43,6 +43,9 @@ public class AuthController {
     @Value("${app.cookie.secure:false}")
     private boolean cookieSecure;
 
+    @Value("${app.cookie.same-site:Lax}")
+    private String cookieSameSite;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest req) {
         String username = req.getUsername().trim().toLowerCase();
@@ -73,7 +76,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
                 .httpOnly(true)
                 .secure(cookieSecure)
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();
@@ -94,7 +97,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
                 .httpOnly(true)
                 .secure(cookieSecure)
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();
@@ -109,7 +112,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("predicto_token", "")
                 .httpOnly(true)
                 .secure(cookieSecure)
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(0)
                 .build();

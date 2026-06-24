@@ -42,6 +42,9 @@ public class DiscordController {
     @Value("${app.cookie.secure:false}")
     private boolean cookieSecure;
 
+    @Value("${app.cookie.same-site:Lax}")
+    private String cookieSameSite;
+
     @GetMapping
     public ResponseEntity<Map<String, String>> authorize() {
         String url = "https://discord.com/api/oauth2/authorize?" +
@@ -63,7 +66,7 @@ public class DiscordController {
         ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
                 .httpOnly(true)
                 .secure(cookieSecure)
-                .sameSite("Lax")
+                .sameSite(cookieSameSite)
                 .path("/")
                 .maxAge(Duration.ofDays(7))
                 .build();

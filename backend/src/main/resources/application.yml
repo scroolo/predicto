@@ -5,7 +5,8 @@ server:
 
 app:
   cookie:
-    secure: false
+    secure: ${APP_COOKIE_SECURE:false}
+    same-site: ${COOKIE_SAME_SITE:Lax}
 
 spring:
   servlet:
