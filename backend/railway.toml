@@ -3,5 +3,5 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "java -jar target/predicto-0.0.1-SNAPSHOT.jar"
+startCommand = "java -jar app.jar"
 restartPolicyType = "on_failure"
