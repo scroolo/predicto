@@ -11,7 +11,7 @@ public class SpaController {
 
     @GetMapping(value = {
         "/",
-        "/{path:^(?!api|assets|actuator|test-static|test-asset).*$}/**"
+        "/{path:^(?!api|assets|actuator|test-static|test-asset|debug-security).*$}/**"
     })
     public String forward() {
         return "forward:/index.html";
@@ -39,5 +39,13 @@ public class SpaController {
         return ResponseEntity.ok()
             .header("Content-Type", "text/css")
             .body(bytes);
+    }
+
+    @GetMapping("/debug-security")
+    @ResponseBody
+    public String debugSecurity(jakarta.servlet.http.HttpServletRequest request) {
+        return "URI: " + request.getRequestURI() +
+               " | Auth: " + request.getUserPrincipal() +
+               " | Scheme: " + request.getScheme();
     }
 }
