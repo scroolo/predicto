@@ -1,9 +1,11 @@
-# Cache bust: 2026-06-24-v6
+# Cache bust: 2026-06-24-v7
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+ARG VITE_API_BASE_URL=https://predictosk.up.railway.app
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 RUN npm run build
 
 FROM nginx:alpine
