@@ -41,6 +41,22 @@ public class SpaController {
             .body(bytes);
     }
 
+    @GetMapping("/test-js")
+    @ResponseBody
+    public ResponseEntity<byte[]> testJs() throws Exception {
+        var resource = new ClassPathResource("/static/index.DkTok79k.js");
+        if (!resource.exists()) {
+            resource = new ClassPathResource("index.DkTok79k.js");
+            if (!resource.exists()) {
+                return ResponseEntity.status(404).body("NOT FOUND".getBytes());
+            }
+        }
+        byte[] bytes = resource.getInputStream().readAllBytes();
+        return ResponseEntity.ok()
+            .header("Content-Type", "application/javascript")
+            .body(bytes);
+    }
+
     @GetMapping("/debug-security")
     @ResponseBody
     public String debugSecurity(jakarta.servlet.http.HttpServletRequest request) {
