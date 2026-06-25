@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/assets/**").permitAll()
-                .requestMatchers("/static/**").permitAll()
+                .requestMatchers("/f/**").permitAll()
                 .requestMatchers("/", "/index.html").permitAll()
                 .requestMatchers("/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.webp", "/*.woff2", "/*.woff", "/*.ttf", "/*.map").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
