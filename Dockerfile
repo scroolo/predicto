@@ -1,4 +1,4 @@
-# Stage 1 — Build frontend
+# Cache bust: 2026-06-25-v1
 FROM node:20-alpine AS frontend-builder
 WORKDIR /frontend
 COPY frontend/package*.json ./
