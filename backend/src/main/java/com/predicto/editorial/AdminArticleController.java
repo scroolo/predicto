@@ -8,6 +8,7 @@ import com.predicto.editorial.dto.CreateArticleRequest;
 import com.predicto.editorial.dto.UpdateArticleRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/articles")
 @RequiredArgsConstructor
+@Slf4j
 public class AdminArticleController {
 
     private final ArticleRepository articleRepository;
@@ -67,7 +69,9 @@ public class AdminArticleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody UpdateArticleRequest req) {
+        log.info("PUT article: id={}", id);
         var article = articleRepository.findById(id);
+        log.info("Article found: {}", article.isPresent());
         if (article.isEmpty()) return ResponseEntity.notFound().build();
         var a = article.get();
 
