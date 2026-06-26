@@ -51,6 +51,8 @@ public class NewsAggregatorJob {
 
                 Article saved = articleRepository.save(article);
                 log.info("NewsAggregatorJob: saved article with id={}", saved.getId());
+                long count = articleRepository.count();
+                log.info("Total articles in DB after save: {}", count);
                 processedUrls.add(item.link());
                 log.info("NewsAggregatorJob: created draft article: {}", item.title());
                 Thread.sleep(2000); // rate limit

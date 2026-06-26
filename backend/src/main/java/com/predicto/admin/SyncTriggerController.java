@@ -10,6 +10,7 @@ import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
 import com.predicto.common.enums.Game;
+import com.predicto.editorial.ArticleRepository;
 import com.predicto.news.NewsAggregatorJob;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class SyncTriggerController {
     private final WalletRepository walletRepository;
     private final EntityManager entityManager;
     private final NewsAggregatorJob newsAggregatorJob;
+    private final ArticleRepository articleRepository;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -46,7 +48,8 @@ public class SyncTriggerController {
                                   PasswordEncoder passwordEncoder,
                                   WalletRepository walletRepository,
                                   EntityManager entityManager,
-                                  NewsAggregatorJob newsAggregatorJob) {
+                                  NewsAggregatorJob newsAggregatorJob,
+                                  ArticleRepository articleRepository) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -59,6 +62,7 @@ public class SyncTriggerController {
         this.walletRepository = walletRepository;
         this.entityManager = entityManager;
         this.newsAggregatorJob = newsAggregatorJob;
+        this.articleRepository = articleRepository;
     }
 
     @PostMapping("/trigger")
@@ -215,6 +219,12 @@ public class SyncTriggerController {
     public String triggerNews() {
         newsAggregatorJob.run();
         return "News aggregator job triggered";
+    }
+
+    @GetMapping("/debug/articles-count")
+    @ResponseBody
+    public String articlesCount() {
+        return "Total articles in DB: " + articleRepository.count();
     }
 
     @GetMapping("/runs")
