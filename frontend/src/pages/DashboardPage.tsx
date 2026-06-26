@@ -123,14 +123,27 @@ export default function DashboardPage() {
     return map[s] || 'bg-gray-700 text-gray-400'
   }
 
+  const MAIN_LEAGUES = ['LCK', 'LEC', 'LCS', 'LPL', 'Worlds', 'MSI', 'ESL Pro League', 'BLAST Premier', 'IEM', 'PGL Major', 'BLAST.tv Major']
+  const mainLeagues = leagues.filter(l => MAIN_LEAGUES.some(name => l.name.includes(name)))
+  const otherLeagues = leagues.filter(l => !MAIN_LEAGUES.some(name => l.name.includes(name)))
+
   return (
     <PageLayout>
       <div className="max-w-6xl mx-auto px-4 py-5">
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
-        <select value={leagueFilter} onChange={(e) => setLeagueFilter(e.target.value)} className="select-field w-40 text-sm">
+        <select value={leagueFilter} onChange={(e) => setLeagueFilter(e.target.value)} className="select-field w-48 text-sm">
           <option value="all">{t('matches.vsetky_ligy')}</option>
-          {leagues.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          {mainLeagues.length > 0 && (
+            <optgroup label="Hlavné ligy">
+              {mainLeagues.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            </optgroup>
+          )}
+          {otherLeagues.length > 0 && (
+            <optgroup label="Ostatné">
+              {otherLeagues.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+            </optgroup>
+          )}
         </select>
 
         <div className="flex gap-1 bg-surface rounded-lg p-0.5">
