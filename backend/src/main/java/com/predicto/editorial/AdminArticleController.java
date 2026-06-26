@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.OffsetDateTime;
@@ -186,33 +187,46 @@ public class AdminArticleController {
     }
 
     @PatchMapping("/{id}/publish")
+    @Transactional
     public ResponseEntity<?> publish(@PathVariable UUID id) {
-        var article = findArticleById(id);
-        if (article.isEmpty()) return ResponseEntity.notFound().build();
-        var a = article.get();
-        a.setStatus(ArticleStatus.PUBLISHED);
-        if (a.getPublishedAt() == null) a.setPublishedAt(OffsetDateTime.now());
-        articleRepository.save(a);
-        return ResponseEntity.ok(a);
+        int updated = entityManager.createQuery(
+            "UPDATE Article a SET a.status = :status, a.publishedAt = CASE WHEN a.publishedAt IS NULL THEN :now ELSE a.publishedAt END WHERE a.id = :id"
+        ).setParameter("status", ArticleStatus.PUBLISHED)
+         .setParameter("now", OffsetDateTime.now())
+         .setParameter("id", id)
+         .executeUpdate();
+        if (updated == 0) return ResponseEntity.notFound().build();
+        var articles = entityManager.createQuery(
+            "SELECT a FROM Article a WHERE a.id = :id", Article.class
+        ).setParameter("id", id).getResultList();
+        return ResponseEntity.ok(articles.get(0));
     }
 
     @PatchMapping("/{id}/unpublish")
+    @Transactional
     public ResponseEntity<?> unpublish(@PathVariable UUID id) {
-        var article = findArticleById(id);
-        if (article.isEmpty()) return ResponseEntity.notFound().build();
-        var a = article.get();
-        a.setStatus(ArticleStatus.DRAFT);
-        articleRepository.save(a);
-        return ResponseEntity.ok(a);
+        int updated = entityManager.createQuery(
+            "UPDATE Article a SET a.status = :status WHERE a.id = :id"
+        ).setParameter("status", ArticleStatus.DRAFT)
+         .setParameter("id", id)
+         .executeUpdate();
+        if (updated == 0) return ResponseEntity.notFound().build();
+        var articles = entityManager.createQuery(
+            "SELECT a FROM Article a WHERE a.id = :id", Article.class
+        ).setParameter("id", id).getResultList();
+        return ResponseEntity.ok(articles.get(0));
     }
 
     @PatchMapping("/{id}/feature")
+    @Transactional
     public ResponseEntity<?> toggleFeature(@PathVariable UUID id) {
-        var article = findArticleById(id);
-        if (article.isEmpty()) return ResponseEntity.notFound().build();
-        var a = article.get();
-        a.setFeatured(!a.getFeatured());
-        articleRepository.save(a);
-        return ResponseEntity.ok(a);
+        int updated = entityManager.createNativeQuery(
+            "UPDATE articles SET featured = NOT featured WHERE id = ?"
+        ).setParameter(1, id).executeUpdate();
+        if (updated == 0) return ResponseEntity.notFound().build();
+        var articles = entityManager.createQuery(
+            "SELECT a FROM Article a WHERE a.id = :id", Article.class
+        ).setParameter("id", id).getResultList();
+        return ResponseEntity.ok(articles.get(0));
     }
 }
