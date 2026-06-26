@@ -1,6 +1,10 @@
 package com.predicto.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.predicto.editorial.Article;
+import com.predicto.editorial.ArticleCategory;
+import com.predicto.editorial.ArticleStatus;
+import com.predicto.common.enums.Game;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,7 +21,7 @@ public class AiNewsService {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
-    public String generateArticle(RssItem item) throws Exception {
+    public Article generateArticle(RssItem item) throws Exception {
         String prompt = """
             Napíš esports/sports článok v slovenčine na základe tejto správy:
             
@@ -72,6 +76,23 @@ public class AiNewsService {
             title = text.substring(text.indexOf("TITLE:") + 6, text.indexOf("CONTENT:")).trim();
             articleContent = text.substring(text.indexOf("CONTENT:") + 8).trim();
         }
-        return title + "|||" + articleContent;
+
+        String slugBase = item.title().toLowerCase()
+            .replaceAll("[^a-z0-9\\s]", "")
+            .replaceAll("\\s+", "-")
+            .trim();
+        String slug = slugBase.substring(0, Math.min(80, slugBase.length())) + "-" + System.currentTimeMillis();
+
+        Article article = new Article();
+        article.setTitle(title);
+        article.setContent(articleContent);
+        article.setStatus(ArticleStatus.DRAFT);
+        article.setGame(Game.valueOf(item.source().sport()));
+        article.setSourceUrl(item.link());
+        article.setSlug(slug);
+        article.setSummary(articleContent.substring(0, Math.min(200, articleContent.length())));
+        article.setCategory(ArticleCategory.NEWS);
+
+        return article;
     }
 }
