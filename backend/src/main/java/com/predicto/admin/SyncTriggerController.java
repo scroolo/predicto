@@ -3,6 +3,7 @@ package com.predicto.admin;
 import com.predicto.auth.UserRepository;
 import com.predicto.betting.OddsCalculationService;
 import com.predicto.wallet.WalletRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import com.predicto.catalog.LeagueRepository;
@@ -29,6 +30,7 @@ public class SyncTriggerController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final WalletRepository walletRepository;
+    private final EntityManager entityManager;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -39,7 +41,8 @@ public class SyncTriggerController {
                                   LeagueRepository leagueRepository,
                                   UserRepository userRepository,
                                   PasswordEncoder passwordEncoder,
-                                  WalletRepository walletRepository) {
+                                  WalletRepository walletRepository,
+                                  EntityManager entityManager) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -50,6 +53,7 @@ public class SyncTriggerController {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.walletRepository = walletRepository;
+        this.entityManager = entityManager;
     }
 
     @PostMapping("/trigger")
@@ -184,7 +188,14 @@ public class SyncTriggerController {
         try {
             return userRepository.findByUsername(username)
                 .map(u -> {
-                    walletRepository.deleteByUserId(u.getId());
+                    UUID userId = u.getId();
+                    try { walletRepository.deleteByUserId(userId); } catch (Exception e) { }
+                    try {
+                        entityManager.createNativeQuery("DELETE FROM wallets WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+                        entityManager.createNativeQuery("DELETE FROM predictions WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+                        entityManager.createNativeQuery("DELETE FROM prediction_entries WHERE user_id = :id").setParameter("id", userId).executeUpdate();
+                        entityManager.flush();
+                    } catch (Exception e) { return "SQL Error: " + e.getMessage(); }
                     userRepository.delete(u);
                     return "Deleted: " + username;
                 })
