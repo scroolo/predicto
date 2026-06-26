@@ -62,6 +62,9 @@ public class Article extends BaseEntity {
     @Column(name = "published_at")
     private OffsetDateTime publishedAt;
 
+    @Column(name = "source_url", length = 512)
+    private String sourceUrl;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;

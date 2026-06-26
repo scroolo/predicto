@@ -34,4 +34,6 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     List<Article> findByFeaturedTrueAndStatusAndLanguageOrderByPublishedAtDesc(ArticleStatus status, String language, Pageable pageable);
 
     boolean existsBySlug(String slug);
+
+    boolean existsBySourceUrl(String sourceUrl);
 }
