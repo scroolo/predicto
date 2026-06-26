@@ -69,6 +69,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/teams/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/f1/**").permitAll()
                 .requestMatchers("/api/f1/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/admin/articles/debug/**").permitAll()
                 .requestMatchers("/api/admin/articles/**").hasAnyRole("ADMIN", "EDITOR")
                 .requestMatchers("/api/admin/articles").hasAnyRole("ADMIN", "EDITOR")
                 .requestMatchers("/api/admin/users/**").hasRole("ADMIN")
