@@ -4,6 +4,15 @@ import api from '../lib/api'
 import { useAuth } from '../context/AuthContext'
 import { SkeletonProfile } from '../components/Skeleton'
 
+const rarityColors: Record<string, string> = {
+  COMMON: 'border-gray-500/50 bg-gray-500/10',
+  UNCOMMON: 'border-green-500/50 bg-green-500/10',
+  RARE: 'border-blue-500/50 bg-blue-500/10',
+  EPIC: 'border-purple-500/50 bg-purple-500/10',
+  LEGENDARY: 'border-amber-500/50 bg-amber-500/10',
+  MYTHIC: 'border-pink-500/50 bg-pink-500/10',
+}
+
 const BADGE_COLORS: Record<string, string> = {
   ROOKIE: '#9E9E9E',
   SILVER: '#C0C0C0',
@@ -21,15 +30,25 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ username: '', displayName: '' })
   const [saving, setSaving] = useState(false)
+  const [achievements, setAchievements] = useState<any[]>([])
+  const [allAchievements, setAllAchievements] = useState<any[]>([])
 
   useEffect(() => {
-    api.get('/api/users/me/profile')
-      .then(r => {
-        setProfile(r.data)
-        setForm({ username: r.data.username, displayName: r.data.displayName || '' })
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
+    (async () => {
+      try {
+        const [profileRes, achRes, allAchRes] = await Promise.all([
+          api.get('/api/users/me/profile'),
+          api.get('/api/achievements/me'),
+          api.get('/api/achievements'),
+        ])
+        const data = profileRes.data
+        setProfile(data)
+        setForm({ username: data.username, displayName: data.displayName || '' })
+        setAchievements(achRes.data ?? [])
+        setAllAchievements(allAchRes.data ?? [])
+      } catch {}
+      setLoading(false)
+    })()
   }, [])
 
   const handleSave = async () => {
@@ -173,6 +192,25 @@ export default function ProfilePage() {
             <div style={{ color: '#aaa', fontSize: '12px' }}>{label}</div>
           </div>
         ))}
+      </div>
+
+      {/* ACHIEVEMENTS */}
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-4">Achievementy</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+          {allAchievements.map(ach => {
+            const unlocked = achievements.find((u: any) => u.achievement.id === ach.id)
+            return (
+              <div key={ach.id} className={`card p-3 border ${rarityColors[ach.rarity] || ''} ${!unlocked ? 'opacity-30 grayscale' : ''} transition-all`}>
+                <div className="text-2xl mb-1">{ach.icon}</div>
+                <div className="font-semibold text-sm">{ach.name}</div>
+                <div className="text-xs text-text-secondary mt-1">{ach.description}</div>
+                {unlocked && <div className="text-xs text-green-400 mt-1">✓ Odomknuté</div>}
+                <div className="text-xs text-text-secondary mt-1">{ach.points} bodov</div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
       {/* RECENT PREDICTIONS */}
