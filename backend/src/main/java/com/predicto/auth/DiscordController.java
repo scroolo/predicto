@@ -1,5 +1,6 @@
 package com.predicto.auth;
 
+import com.predicto.achievement.AchievementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class DiscordController {
 
     private final DiscordAuthService discordAuthService;
+    private final AchievementService achievementService;
 
     @Value("${discord.oauth2.client-id}")
     private String clientId;
@@ -63,6 +65,8 @@ public class DiscordController {
         String accessToken = tokenResponse.accessToken();
         var discordProfile = fetchProfile(accessToken);
         var result = discordAuthService.loginOrRegister(discordProfile);
+
+        achievementService.checkAndAward(result.userId(), "daily_login");
 
         String token = result.token();
         log.info("Discord callback - redirecting with token");
