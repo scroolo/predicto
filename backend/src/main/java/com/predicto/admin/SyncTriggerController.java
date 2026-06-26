@@ -175,12 +175,16 @@ public class SyncTriggerController {
     @PostMapping("/debug/delete-user")
     @ResponseBody
     public String deleteUser(@RequestParam String username) {
-        return userRepository.findByUsername(username)
-            .map(u -> {
-                userRepository.delete(u);
-                return "Deleted: " + username;
-            })
-            .orElse("User not found: " + username);
+        try {
+            return userRepository.findByUsername(username)
+                .map(u -> {
+                    userRepository.delete(u);
+                    return "Deleted: " + username;
+                })
+                .orElse("User not found: " + username);
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
     @GetMapping("/runs")
