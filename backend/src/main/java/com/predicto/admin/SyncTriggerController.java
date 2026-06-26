@@ -145,6 +145,33 @@ public class SyncTriggerController {
             .orElse("User not found: " + username);
     }
 
+    @DeleteMapping("/debug/cleanup-users")
+    @ResponseBody
+    public String cleanupUsers() {
+        List<String> keepUsernames = List.of("milanko", "scroolo_3gv");
+        List<com.predicto.auth.User> allUsers = userRepository.findAll();
+        int deleted = 0;
+        for (com.predicto.auth.User u : allUsers) {
+            if (!keepUsernames.contains(u.getUsername())) {
+                userRepository.delete(u);
+                deleted++;
+            }
+        }
+        return "Deleted " + deleted + " users";
+    }
+
+    @PostMapping("/debug/rename-user")
+    @ResponseBody
+    public String renameUser(@RequestParam String oldUsername, @RequestParam String newUsername) {
+        return userRepository.findByUsername(oldUsername)
+            .map(u -> {
+                u.setUsername(newUsername);
+                userRepository.save(u);
+                return "Renamed " + oldUsername + " to " + newUsername;
+            })
+            .orElse("User not found: " + oldUsername);
+    }
+
     @GetMapping("/runs")
     public ResponseEntity<List<SyncRun>> getRecentRuns(@RequestParam(defaultValue = "20") int limit) {
         var runs = syncRunRepository.findTop20ByOrderByStartedAtDesc();
