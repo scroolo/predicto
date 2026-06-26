@@ -20,6 +20,7 @@ public class NewsAggregatorJob {
 
     @Scheduled(fixedDelay = 3600000) // every hour
     public void run() {
+        processedUrls.clear();
         log.info("NewsAggregatorJob: starting...");
         List<RssItem> items = rssFeedService.fetchAll();
         log.info("NewsAggregatorJob: fetched {} RSS items", items.size());
