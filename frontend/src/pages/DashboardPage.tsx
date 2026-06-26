@@ -123,7 +123,12 @@ export default function DashboardPage() {
     return map[s] || 'bg-gray-700 text-gray-400'
   }
 
-  const MAIN_LEAGUES = ['LCK', 'LEC', 'LCS', 'LPL', 'Worlds', 'Mid-Season Invitational', 'EMEA Masters', 'LTA', 'LTA North', 'LTA South', 'PCS', 'LCO', 'VCS', 'LCP']
+  const MAIN_LEAGUES = [
+    // LoL
+    'LCK', 'LEC', 'LCS', 'LPL', 'Worlds', 'Mid-Season Invitational', 'EMEA Masters', 'LTA', 'LTA North', 'LTA South', 'PCS', 'LCO', 'VCS', 'LCP',
+    // CS2
+    'ESL Pro League', 'BLAST Premier', 'IEM', 'PGL Major', 'BLAST.tv Major', 'ESL One', 'BLAST Rising', 'ESL Challenger League', 'Esports World Cup', 'Gamers8', 'CCT', 'BLAST Rivals', 'BLAST Open', 'Elisa Masters', 'Pinnacle Cup Championship'
+  ]
   const mainLeagues = leagues.filter(l => MAIN_LEAGUES.some(name => l.name.includes(name)))
   const otherLeagues = leagues.filter(l => !MAIN_LEAGUES.some(name => l.name.includes(name)))
 
