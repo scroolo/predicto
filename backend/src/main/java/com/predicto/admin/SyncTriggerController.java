@@ -172,6 +172,17 @@ public class SyncTriggerController {
             .orElse("User not found: " + oldUsername);
     }
 
+    @PostMapping("/debug/delete-user")
+    @ResponseBody
+    public String deleteUser(@RequestParam String username) {
+        return userRepository.findByUsername(username)
+            .map(u -> {
+                userRepository.delete(u);
+                return "Deleted: " + username;
+            })
+            .orElse("User not found: " + username);
+    }
+
     @GetMapping("/runs")
     public ResponseEntity<List<SyncRun>> getRecentRuns(@RequestParam(defaultValue = "20") int limit) {
         var runs = syncRunRepository.findTop20ByOrderByStartedAtDesc();
