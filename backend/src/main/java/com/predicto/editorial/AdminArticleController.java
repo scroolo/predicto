@@ -71,6 +71,14 @@ public class AdminArticleController {
                 Object[] cols = (Object[]) row;
                 sb.append("id=").append(cols[0]).append(", type=").append(cols[1]).append("\n");
             }
+            var schemaResult = entityManager.createNativeQuery(
+                "SELECT column_name, data_type, udt_name FROM information_schema.columns WHERE table_name = 'articles' AND column_name = 'id'"
+            ).getResultList();
+            for (Object row : schemaResult) {
+                Object[] cols = (Object[]) row;
+                sb.append("column=").append(cols[0]).append(", data_type=").append(cols[1]).append(", udt_name=").append(cols[2]).append("\n");
+            }
+            sb.append("total=").append(result.size()).append(" rows\n");
             return sb.length() > 0 ? sb.toString() : "No articles found";
         } catch (Exception e) {
             return "Error: " + e.getMessage();
