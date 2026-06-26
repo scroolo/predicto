@@ -25,14 +25,21 @@ public class NewsAggregatorJob {
         log.info("NewsAggregatorJob: fetched {} RSS items", items.size());
 
         for (RssItem item : items) {
-            if (processedUrls.contains(item.link())) continue;
-            if (articleRepository.existsBySourceUrl(item.link())) continue;
+            if (processedUrls.contains(item.link())) {
+                log.info("Skipping (processedUrls): {}", item.title());
+                continue;
+            }
+            if (articleRepository.existsBySourceUrl(item.link())) {
+                log.info("Skipping (DB exists): {}", item.title());
+                continue;
+            }
 
             try {
                 String result = aiNewsService.generateArticle(item);
                 String[] parts = result.split("\\|\\|\\|", 2);
                 String title = parts.length > 1 ? parts[0].trim() : item.title();
                 String content = parts.length > 1 ? parts[1].trim() : result;
+                log.info("Attempting to save: {}", item.title());
                 Article article = new Article();
                 article.setTitle(title);
                 article.setContent(content);
