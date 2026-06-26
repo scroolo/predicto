@@ -43,11 +43,11 @@ public class NewsAggregatorJob {
                 article.setCreatedAt(OffsetDateTime.now());
 
                 // Required fields
-                String slug = item.title().toLowerCase()
+                String slugBase = item.title().toLowerCase()
                     .replaceAll("[^a-z0-9\\s]", "")
                     .replaceAll("\\s+", "-")
-                    .substring(0, Math.min(80, item.title().length()))
-                    + "-" + System.currentTimeMillis();
+                    .trim();
+                String slug = slugBase.substring(0, Math.min(80, slugBase.length())) + "-" + System.currentTimeMillis();
                 article.setSlug(slug);
                 article.setSummary(content.substring(0, Math.min(200, content.length())));
                 article.setCategory(ArticleCategory.NEWS);
