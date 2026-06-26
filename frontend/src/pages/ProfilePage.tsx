@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
+import { useAuth } from '../context/AuthContext'
 import { SkeletonProfile } from '../components/Skeleton'
 
 const BADGE_COLORS: Record<string, string> = {
@@ -14,6 +15,7 @@ const BADGE_COLORS: Record<string, string> = {
 
 export default function ProfilePage() {
   const navigate = useNavigate()
+  const { refreshUser } = useAuth()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
@@ -35,6 +37,7 @@ export default function ProfilePage() {
     try {
       const res = await api.patch('/api/users/me', form)
       setProfile((prev: any) => ({ ...prev, ...res.data }))
+      await refreshUser()
       setEditing(false)
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update profile')
