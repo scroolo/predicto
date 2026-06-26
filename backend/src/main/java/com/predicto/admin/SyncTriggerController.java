@@ -1,5 +1,6 @@
 package com.predicto.admin;
 
+import com.predicto.auth.UserRepository;
 import com.predicto.betting.OddsCalculationService;
 import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
@@ -22,6 +23,7 @@ public class SyncTriggerController {
     private final HistoricalSyncService historicalSyncService;
     private final MatchRepository matchRepository;
     private final LeagueRepository leagueRepository;
+    private final UserRepository userRepository;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -29,7 +31,8 @@ public class SyncTriggerController {
                                   OddsCalculationService oddsCalculationService,
                                   HistoricalSyncService historicalSyncService,
                                   MatchRepository matchRepository,
-                                  LeagueRepository leagueRepository) {
+                                  LeagueRepository leagueRepository,
+                                  UserRepository userRepository) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -37,6 +40,7 @@ public class SyncTriggerController {
         this.historicalSyncService = historicalSyncService;
         this.matchRepository = matchRepository;
         this.leagueRepository = leagueRepository;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/trigger")
@@ -108,6 +112,14 @@ public class SyncTriggerController {
         return leagueRepository.findByGame(Game.CS2).stream()
             .map(l -> l.getName())
             .collect(java.util.stream.Collectors.toList());
+    }
+
+    @GetMapping("/debug/user/{username}")
+    @ResponseBody
+    public Map<String, Object> getUser(@PathVariable String username) {
+        return userRepository.findByUsername(username)
+            .map(u -> Map.of("id", u.getId(), "username", u.getUsername(), "role", u.getRole(), "hasPassword", u.getPassword() != null))
+            .orElse(Map.of("error", "not found"));
     }
 
     @GetMapping("/runs")
