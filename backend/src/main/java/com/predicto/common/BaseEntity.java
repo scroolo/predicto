@@ -13,6 +13,6 @@ public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "uuid")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 }
