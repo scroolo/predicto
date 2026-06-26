@@ -30,9 +30,12 @@ public class NewsAggregatorJob {
             if (articleRepository.existsBySourceUrl(item.link())) continue;
 
             try {
-                String content = aiNewsService.generateArticle(item);
+                String result = aiNewsService.generateArticle(item);
+                String[] parts = result.split("\\|\\|\\|", 2);
+                String title = parts.length > 1 ? parts[0].trim() : item.title();
+                String content = parts.length > 1 ? parts[1].trim() : result;
                 Article article = new Article();
-                article.setTitle(item.title());
+                article.setTitle(title);
                 article.setContent(content);
                 article.setStatus(ArticleStatus.DRAFT);
                 article.setGame(Game.valueOf(item.source().sport()));

@@ -21,25 +21,24 @@ public class AiNewsService {
         String prompt = """
             Napíš esports/sports článok v slovenčine na základe tejto správy:
             
-            Titulok: %s
+            Originálny titulok: %s
             Zdroj: %s
             Popis: %s
             Odkaz: %s
             
+            Vráť odpoveď v tomto formáte:
+            TITLE: [slovenský preklad titulku]
+            CONTENT: [celý článok v slovenčine]
+            
             Štruktúra článku:
             1. TL;DR - krátke zhrnutie (2-3 vety)
-            2. Čo sa stalo? (hlavná správa)
+            2. Čo sa stalo?
             3. Prečo je to dôležité?
             4. Kontext a história
             5. Dopad na scénu
             6. Predicto Insight (analytický pohľad, nie fakt)
             
-            Dôležité:
-            - Píš v slovenčine
-            - Buď objektívny a faktický
-            - Predicto Insight jasne označ ako analytický pohľad
-            - Maximálne 500 slov
-            - Vráť iba text článku bez markdown hlavičiek
+            Všetko musí byť v slovenčine. Maximálne 500 slov.
             """.formatted(item.title(), item.source().name(), item.description(), item.link());
 
         var request = Map.of(
@@ -66,6 +65,13 @@ public class AiNewsService {
         var responseMap = mapper.readValue(responseBody, Map.class);
         var content = (java.util.List<?>) responseMap.get("content");
         var firstBlock = (Map<?, ?>) content.get(0);
-        return (String) firstBlock.get("text");
+        String text = (String) firstBlock.get("text");
+        String title = item.title();
+        String articleContent = text;
+        if (text.contains("TITLE:") && text.contains("CONTENT:")) {
+            title = text.substring(text.indexOf("TITLE:") + 6, text.indexOf("CONTENT:")).trim();
+            articleContent = text.substring(text.indexOf("CONTENT:") + 8).trim();
+        }
+        return title + "|||" + articleContent;
     }
 }
