@@ -5,6 +5,8 @@ import com.predicto.common.BaseEntity;
 import com.predicto.common.enums.Game;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.OffsetDateTime;
 
@@ -62,4 +64,12 @@ public class Article extends BaseEntity {
 
     @Column(name = "source_url", length = 512)
     private String sourceUrl;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private OffsetDateTime updatedAt;
 }
