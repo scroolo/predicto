@@ -97,7 +97,11 @@ public class AdminArticleController {
                 "SELECT a.id, a.title FROM articles a WHERE a.id = ?"
             ).setParameter(1, id).getResultList();
 
-            return "JPQL=" + result.size() + ", NATIVE(UUID param)=" + nativeResult.size() + ", id=" + id;
+            var byId = entityManager.unwrap(org.hibernate.Session.class)
+                .byId(Article.class).load(id);
+
+            return "JPQL=" + result.size() + ", NATIVE(UUID param)=" + nativeResult.size()
+                + ", byId=" + (byId != null) + ", id=" + id;
         } catch (Exception e) {
             return "Error: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
