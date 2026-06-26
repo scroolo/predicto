@@ -35,6 +35,14 @@ public class AdminArticleController {
         return ResponseEntity.ok(articleRepository.findAll(PageRequest.of(page, size, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"))));
     }
 
+    @GetMapping("/debug/article/{id}")
+    @ResponseBody
+    public String debugArticle(@PathVariable UUID id) {
+        var article = articleRepository.findById(id);
+        long count = articleRepository.count();
+        return "found=" + article.isPresent() + ", total=" + count + ", id=" + id;
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateArticleRequest req,
                                     @AuthenticationPrincipal JwtUser jwtUser) {
