@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../lib/api'
 import { SkeletonProfile } from '../components/Skeleton'
 
@@ -13,6 +13,7 @@ const BADGE_COLORS: Record<string, string> = {
 }
 
 export default function ProfilePage() {
+  const navigate = useNavigate()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
@@ -31,6 +32,9 @@ export default function ProfilePage() {
 
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px 16px' }}>
+      <button onClick={() => navigate(-1)} className="btn-secondary mb-4 flex items-center gap-2">
+        ← Späť
+      </button>
       {/* HEADER */}
       <div style={{
         background: 'linear-gradient(135deg, #0d1117 0%, #1a1f2e 100%)',
