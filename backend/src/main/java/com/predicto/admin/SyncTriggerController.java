@@ -10,6 +10,7 @@ import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
 import com.predicto.common.enums.Game;
+import com.predicto.news.NewsAggregatorJob;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class SyncTriggerController {
     private final PasswordEncoder passwordEncoder;
     private final WalletRepository walletRepository;
     private final EntityManager entityManager;
+    private final NewsAggregatorJob newsAggregatorJob;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -43,7 +45,8 @@ public class SyncTriggerController {
                                   UserRepository userRepository,
                                   PasswordEncoder passwordEncoder,
                                   WalletRepository walletRepository,
-                                  EntityManager entityManager) {
+                                  EntityManager entityManager,
+                                  NewsAggregatorJob newsAggregatorJob) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -55,6 +58,7 @@ public class SyncTriggerController {
         this.passwordEncoder = passwordEncoder;
         this.walletRepository = walletRepository;
         this.entityManager = entityManager;
+        this.newsAggregatorJob = newsAggregatorJob;
     }
 
     @PostMapping("/trigger")
@@ -204,6 +208,13 @@ public class SyncTriggerController {
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
+    }
+
+    @PostMapping("/trigger-news")
+    @ResponseBody
+    public String triggerNews() {
+        newsAggregatorJob.run();
+        return "News aggregator job triggered";
     }
 
     @GetMapping("/runs")
