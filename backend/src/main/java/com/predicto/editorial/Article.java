@@ -43,7 +43,7 @@ public class Article extends BaseEntity {
     private Game game;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = true)
     private User author;
 
     @Enumerated(EnumType.STRING)
