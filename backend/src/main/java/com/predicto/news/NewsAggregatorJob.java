@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Component
@@ -18,55 +21,46 @@ public class NewsAggregatorJob {
     private final ArticleRepository articleRepository;
     private final Set<String> processedUrls = Collections.synchronizedSet(new HashSet<>());
 
-    @Scheduled(fixedDelay = 3600000) // every hour
+    @Scheduled(fixedDelay = 3600000)
     public void run() {
         processedUrls.clear();
         log.info("NewsAggregatorJob: starting...");
+
+        LocalTime now = LocalTime.now(ZoneId.of("Europe/Bratislava"));
+        int hour = now.getHour();
+
+        if (hour < 7 || hour >= 22) {
+            log.info("NewsAggregatorJob: outside active hours, skipping");
+            return;
+        }
+
+        int maxPerRun = 2;
+        int created = 0;
+
         List<RssItem> items = rssFeedService.fetchAll();
         log.info("NewsAggregatorJob: fetched {} RSS items", items.size());
 
         for (RssItem item : items) {
-            if (processedUrls.contains(item.link())) {
-                log.info("Skipping (processedUrls): {}", item.title());
-                continue;
-            }
+            if (created >= maxPerRun) break;
+            if (processedUrls.contains(item.link())) continue;
             if (articleRepository.existsBySourceUrl(item.link())) {
-                log.info("Skipping (DB exists): {}", item.title());
+                processedUrls.add(item.link());
                 continue;
             }
 
             try {
-                String result = aiNewsService.generateArticle(item);
-                String[] parts = result.split("\\|\\|\\|", 2);
-                String title = parts.length > 1 ? parts[0].trim() : item.title();
-                String content = parts.length > 1 ? parts[1].trim() : result;
-                log.info("Attempting to save: {}", item.title());
-                Article article = new Article();
-                article.setTitle(title);
-                article.setContent(content);
-                article.setStatus(ArticleStatus.DRAFT);
-                article.setGame(Game.valueOf(item.source().sport()));
-                article.setSourceUrl(item.link());
-                // Required fields
-                String slugBase = item.title().toLowerCase()
-                    .replaceAll("[^a-z0-9\\s]", "")
-                    .replaceAll("\\s+", "-")
-                    .trim();
-                String slug = slugBase.substring(0, Math.min(80, slugBase.length())) + "-" + System.currentTimeMillis();
-                article.setSlug(slug);
-                article.setSummary(content.substring(0, Math.min(200, content.length())));
-                article.setCategory(ArticleCategory.NEWS);
-
+                Article article = aiNewsService.generateArticle(item);
+                if (article == null) continue;
                 Article saved = articleRepository.save(article);
-                log.info("NewsAggregatorJob: saved article with id={}", saved.getId());
-                long count = articleRepository.count();
-                log.info("Total articles in DB after save: {}", count);
+                log.info("NewsAggregatorJob: saved article id={}, title={}", saved.getId(), item.title());
                 processedUrls.add(item.link());
-                log.info("NewsAggregatorJob: created draft article: {}", item.title());
-                Thread.sleep(2000); // rate limit
+                created++;
+                Thread.sleep(2000);
             } catch (Exception e) {
-                log.error("NewsAggregatorJob: failed for {}: {}", item.title(), e.getMessage());
+                log.error("NewsAggregatorJob: error processing item {}: {}", item.link(), e.getMessage());
             }
         }
+
+        log.info("NewsAggregatorJob: done, created {} articles this run", created);
     }
 }
