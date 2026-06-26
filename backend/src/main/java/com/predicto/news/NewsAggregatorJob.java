@@ -1,11 +1,12 @@
 package com.predicto.news;
 
+import com.predicto.common.enums.Game;
 import com.predicto.editorial.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @Component
@@ -34,9 +35,20 @@ public class NewsAggregatorJob {
                 article.setTitle(item.title());
                 article.setContent(content);
                 article.setStatus(ArticleStatus.DRAFT);
-                article.setGame(com.predicto.common.enums.Game.valueOf(item.source().sport()));
+                article.setGame(Game.valueOf(item.source().sport()));
                 article.setSourceUrl(item.link());
-                article.setCreatedAt(java.time.OffsetDateTime.now());
+                article.setCreatedAt(OffsetDateTime.now());
+
+                // Required fields
+                String slug = item.title().toLowerCase()
+                    .replaceAll("[^a-z0-9\\s]", "")
+                    .replaceAll("\\s+", "-")
+                    .substring(0, Math.min(80, item.title().length()))
+                    + "-" + System.currentTimeMillis();
+                article.setSlug(slug);
+                article.setSummary(content.substring(0, Math.min(200, content.length())));
+                article.setCategory(ArticleCategory.NEWS);
+
                 articleRepository.save(article);
                 processedUrls.add(item.link());
                 log.info("NewsAggregatorJob: created draft article: {}", item.title());
