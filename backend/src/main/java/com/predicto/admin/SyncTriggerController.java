@@ -131,7 +131,7 @@ public class SyncTriggerController {
     public String resetPassword(@RequestParam String username, @RequestParam String password) {
         return userRepository.findByUsername(username)
             .map(u -> {
-                u.setPassword(passwordEncoder.encode(password));
+                u.setPasswordHash(passwordEncoder.encode(password));
                 userRepository.save(u);
                 return "Password reset for: " + username;
             })
