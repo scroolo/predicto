@@ -92,18 +92,14 @@ public class AdminArticleController {
             var result = entityManager.createQuery(
                 "SELECT a FROM Article a WHERE a.id = :id", Article.class
             ).setParameter("id", id).getResultList();
-            int fetchCount = 0;
-            try {
-                var resultFetch = entityManager.createQuery(
-                    "SELECT a FROM Article a LEFT JOIN FETCH a.author WHERE a.id = :id", Article.class
-                ).setParameter("id", id).getResultList();
-                fetchCount = resultFetch.size();
-            } catch (Exception e) {
-                return "JPQL count=" + result.size() + ", JPQL+FETCH Error: " + e.getMessage();
-            }
-            return "JPQL count=" + result.size() + ", JPQL+LEFT_FETCH count=" + fetchCount + ", id=" + id;
+
+            var nativeResult = entityManager.createNativeQuery(
+                "SELECT a.id, a.title FROM articles a WHERE a.id = ?"
+            ).setParameter(1, id).getResultList();
+
+            return "JPQL=" + result.size() + ", NATIVE(UUID param)=" + nativeResult.size() + ", id=" + id;
         } catch (Exception e) {
-            return "Error: " + e.getMessage();
+            return "Error: " + e.getClass().getSimpleName() + ": " + e.getMessage();
         }
     }
 
