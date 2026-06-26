@@ -122,7 +122,7 @@ public class SyncTriggerController {
     @ResponseBody
     public Map<String, Object> getUser(@PathVariable String username) {
         return userRepository.findByUsername(username)
-            .map(u -> Map.of("id", u.getId(), "username", u.getUsername(), "role", u.getRole(), "hasPassword", u.getPassword() != null))
+            .map(u -> Map.of("id", u.getId(), "username", u.getUsername(), "role", u.getRole(), "hasPassword", u.getPasswordHash() != null))
             .orElse(Map.of("error", "not found"));
     }
 
