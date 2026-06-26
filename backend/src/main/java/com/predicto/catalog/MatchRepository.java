@@ -66,6 +66,9 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
                                      @Param("excludeMatchId") UUID excludeMatchId,
                                      @Param("limit") int limit);
 
+    @Query("SELECT DISTINCT m.game FROM Match m")
+    List<String> findDistinctGames();
+
     @Query("SELECT DISTINCT m FROM Match m JOIN FETCH m.teamA JOIN FETCH m.teamB WHERE m.status = 'SCHEDULED'")
     List<Match> findAllUpcoming();
 

@@ -1,6 +1,7 @@
 package com.predicto.admin;
 
 import com.predicto.betting.OddsCalculationService;
+import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +18,20 @@ public class SyncTriggerController {
     private final SyncRunRepository syncRunRepository;
     private final OddsCalculationService oddsCalculationService;
     private final HistoricalSyncService historicalSyncService;
+    private final MatchRepository matchRepository;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
                                   SyncRunRepository syncRunRepository,
                                   OddsCalculationService oddsCalculationService,
-                                  HistoricalSyncService historicalSyncService) {
+                                  HistoricalSyncService historicalSyncService,
+                                  MatchRepository matchRepository) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
         this.oddsCalculationService = oddsCalculationService;
         this.historicalSyncService = historicalSyncService;
+        this.matchRepository = matchRepository;
     }
 
     @PostMapping("/trigger")
@@ -85,6 +89,12 @@ public class SyncTriggerController {
         return ResponseEntity.ok(Map.of(
                 "matchesUpdated", count
         ));
+    }
+
+    @GetMapping("/debug/games")
+    @ResponseBody
+    public List<String> getGames() {
+        return matchRepository.findDistinctGames();
     }
 
     @GetMapping("/runs")
