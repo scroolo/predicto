@@ -5,15 +5,19 @@ import com.predicto.auth.UserRepository;
 import com.predicto.betting.BetRepository;
 import com.predicto.common.enums.BetStatus;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AchievementService {
 
     private final AchievementRepository achievementRepository;
@@ -25,6 +29,8 @@ public class AchievementService {
     public void checkAndAward(UUID userId, String trigger) {
         var user = userRepository.findById(userId).orElse(null);
         if (user == null) return;
+
+        log.info("Achievement check: userId={}, trigger={}", userId, trigger);
 
         var allBets = betRepository.findByUserId(userId);
         long totalBets = allBets.size();
@@ -52,12 +58,14 @@ public class AchievementService {
                 tryAward(userId, "exact_score", hasExactScore(allBets));
             }
             case "daily_login" -> {
-                long daysSinceCreation = java.time.Duration.between(user.getCreatedAt(), java.time.OffsetDateTime.now()).toDays();
-                tryAward(userId, "day_1", daysSinceCreation >= 0);
-                tryAward(userId, "week_1", daysSinceCreation >= 6);
-                tryAward(userId, "month_1", daysSinceCreation >= 29);
-                tryAward(userId, "days_100", daysSinceCreation >= 99);
-                tryAward(userId, "days_365", daysSinceCreation >= 364);
+                tryAward(userId, "day_1", true);
+                if (user.getCreatedAt() != null) {
+                    long days = Duration.between(user.getCreatedAt(), OffsetDateTime.now()).toDays();
+                    if (days >= 7) tryAward(userId, "week_1", true);
+                    if (days >= 30) tryAward(userId, "month_1", true);
+                    if (days >= 100) tryAward(userId, "days_100", true);
+                    if (days >= 365) tryAward(userId, "days_365", true);
+                }
             }
             case "leaderboard_update" -> {
                 // These are awarded externally based on rank
