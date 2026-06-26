@@ -19,6 +19,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+
 import java.util.List;
 
 @Configuration
@@ -81,6 +83,12 @@ public class SecurityConfig {
             .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterAfter(jwtAuthFilter, RateLimitFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return web -> web.ignoring()
+            .requestMatchers("/assets/**", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg");
     }
 
     @Bean
