@@ -50,7 +50,7 @@ public class AdminArticleController {
     public String debugSql(@PathVariable String id) {
         try {
             var result = entityManager.createNativeQuery(
-                "SELECT id, title FROM articles WHERE id = :id::uuid"
+                "SELECT id, title FROM articles WHERE CAST(id AS VARCHAR) = :id"
             ).setParameter("id", id).getResultList();
             return "SQL result count: " + result.size();
         } catch (Exception e) {
