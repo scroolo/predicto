@@ -40,9 +40,10 @@ public class AdminArticleController {
     @GetMapping("/debug/article/{id}")
     @ResponseBody
     public String debugArticle(@PathVariable UUID id) {
-        var article = articleRepository.findById(id);
+        var articleRepo = articleRepository.findById(id);
+        var articleEm = entityManager.find(Article.class, id);
         long count = articleRepository.count();
-        return "found=" + article.isPresent() + ", total=" + count + ", id=" + id;
+        return "findById=" + articleRepo.isPresent() + ", em.find=" + (articleEm != null) + ", total=" + count + ", id=" + id;
     }
 
     @GetMapping("/debug/article-sql/{id}")
@@ -71,6 +72,19 @@ public class AdminArticleController {
                 sb.append("id=").append(cols[0]).append(", type=").append(cols[1]).append("\n");
             }
             return sb.length() > 0 ? sb.toString() : "No articles found";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @GetMapping("/debug/article-jpql/{id}")
+    @ResponseBody
+    public String debugJpql(@PathVariable UUID id) {
+        try {
+            var result = entityManager.createQuery(
+                "SELECT a FROM Article a WHERE a.id = :id", Article.class
+            ).setParameter("id", id).getResultList();
+            return "JPQL result count: " + result.size() + ", id=" + id;
         } catch (Exception e) {
             return "Error: " + e.getMessage();
         }
