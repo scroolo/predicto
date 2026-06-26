@@ -16,13 +16,32 @@ export default function ProfilePage() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
+  const [form, setForm] = useState({ username: '', displayName: '' })
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     api.get('/api/users/me/profile')
-      .then(r => setProfile(r.data))
+      .then(r => {
+        setProfile(r.data)
+        setForm({ username: r.data.username, displayName: r.data.displayName || '' })
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [])
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      const res = await api.patch('/api/users/me', form)
+      setProfile((prev: any) => ({ ...prev, ...res.data }))
+      setEditing(false)
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to update profile')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   if (loading) return <SkeletonProfile />
 
@@ -69,9 +88,17 @@ export default function ProfilePage() {
 
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
-            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
-              {profile.displayName ?? profile.username}
-            </h1>
+            {editing ? (
+              <input
+                value={form.displayName}
+                onChange={e => setForm(f => ({ ...f, displayName: e.target.value }))}
+                style={{ fontSize: '24px', fontWeight: 'bold', background: '#ffffff10', border: '1px solid #ffffff30', borderRadius: '8px', padding: '4px 8px', color: 'white', width: '200px' }}
+              />
+            ) : (
+              <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: 'white', margin: 0 }}>
+                {profile.displayName ?? profile.username}
+              </h1>
+            )}
             {profile.badge && (
               <span style={{
                 padding: '3px 10px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold',
@@ -80,13 +107,41 @@ export default function ProfilePage() {
                 {profile.badge}
               </span>
             )}
+            {!editing && (
+              <button onClick={() => setEditing(true)} style={{ background: 'none', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '14px', padding: '4px' }}>
+                ✏️
+              </button>
+            )}
           </div>
-          <div style={{ color: '#aaa', fontSize: '14px', marginBottom: '8px' }}>
-            @{profile.username}
-          </div>
-          <div style={{ color: '#555', fontSize: '12px' }}>
-            Člen od {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('sk-SK', { month: 'long', year: 'numeric' }) : ''}
-          </div>
+          {editing ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ color: '#aaa', fontSize: '12px' }}>@</span>
+                <input
+                  value={form.username}
+                  onChange={e => setForm(f => ({ ...f, username: e.target.value }))}
+                  style={{ background: '#ffffff10', border: '1px solid #ffffff30', borderRadius: '8px', padding: '4px 8px', color: 'white', fontSize: '14px', width: '150px' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={handleSave} disabled={saving} className="btn-primary text-sm">
+                  {saving ? 'Saving...' : 'Save'}
+                </button>
+                <button onClick={() => { setEditing(false); setForm({ username: profile.username, displayName: profile.displayName || '' }) }} className="btn-secondary text-sm">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div style={{ color: '#aaa', fontSize: '14px', marginBottom: '8px' }}>
+                @{profile.username}
+              </div>
+              <div style={{ color: '#555', fontSize: '12px' }}>
+                Člen od {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('sk-SK', { month: 'long', year: 'numeric' }) : ''}
+              </div>
+            </>
+          )}
         </div>
 
         <div style={{ textAlign: 'right' }}>

@@ -93,6 +93,15 @@ public class UserProfileController {
             return ResponseEntity.notFound().build();
         }
 
+        if (req.getUsername() != null) {
+            if (userRepository.findByUsername(req.getUsername()).filter(u -> !u.getId().equals(user.getId())).isPresent()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Username already taken"));
+            }
+            user.setUsername(req.getUsername());
+        }
+        if (req.getDisplayName() != null) {
+            user.setDisplayName(req.getDisplayName());
+        }
         if (req.getPreferredGame() != null) {
             if (!req.getPreferredGame().equals("LOL") && !req.getPreferredGame().equals("CS2")) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid preferredGame. Must be 'LOL' or 'CS2'"));
@@ -176,6 +185,8 @@ public class UserProfileController {
 
     @Data
     public static class UpdateProfileRequest {
+        private String username;
+        private String displayName;
         @Pattern(regexp = "LOL|CS2", message = "Must be 'LOL' or 'CS2'")
         private String preferredGame;
     }
