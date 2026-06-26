@@ -62,7 +62,7 @@ public class ArticleService {
         return articles.map(a -> new ArticleCardDto(
                 a.getId(), a.getTitle(), a.getSlug(), a.getSummary(),
                 a.getCoverImageUrl(), a.getCategory(), a.getGame(), a.getLanguage(),
-                a.getAuthor().getDisplayName(), a.getPublishedAt(), a.getFeatured()));
+                (a.getAuthor() != null ? a.getAuthor().getDisplayName() : "Predicto AI"), a.getPublishedAt(), a.getFeatured()));
     }
 
     public List<ArticleCardDto> getFeaturedArticles(String language) {
@@ -78,7 +78,7 @@ public class ArticleService {
                 .map(a -> new ArticleCardDto(
                         a.getId(), a.getTitle(), a.getSlug(), a.getSummary(),
                         a.getCoverImageUrl(), a.getCategory(), a.getGame(), a.getLanguage(),
-                        a.getAuthor().getDisplayName(), a.getPublishedAt(), a.getFeatured()))
+                        (a.getAuthor() != null ? a.getAuthor().getDisplayName() : "Predicto AI"), a.getPublishedAt(), a.getFeatured()))
                 .toList();
     }
 
@@ -87,7 +87,7 @@ public class ArticleService {
                 .map(a -> new ArticleDetailDto(
                         a.getId(), a.getTitle(), a.getSlug(), a.getSummary(), a.getContent(),
                         a.getCoverImageUrl(), a.getCategory(), a.getGame(), a.getLanguage(),
-                        a.getAuthor().getDisplayName(), a.getAuthor().getAvatarUrl(),
+                        (a.getAuthor() != null ? a.getAuthor().getDisplayName() : "Predicto AI"), (a.getAuthor() != null ? a.getAuthor().getAvatarUrl() : null),
                         a.getPublishedAt(), a.getCreatedAt(), a.getUpdatedAt()));
     }
 }
