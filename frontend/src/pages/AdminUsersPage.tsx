@@ -12,6 +12,13 @@ interface UserItem {
   createdAt: string
 }
 
+interface EditUserForm {
+  username: string
+  email: string
+  role: string
+  password: string
+}
+
 const roleColors: Record<string, string> = {
   USER: 'bg-gray-500/20 text-gray-400',
   EDITOR: 'bg-blue-500/20 text-blue-400',
@@ -27,6 +34,9 @@ export default function AdminUsersPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [savingId, setSavingId] = useState<string | null>(null)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [editingUser, setEditingUser] = useState<UserItem | null>(null)
+  const [editForm, setEditForm] = useState<EditUserForm>({ username: '', email: '', role: 'USER', password: '' })
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   const fetchUsers = useCallback(async (p: number, s: string) => {
     setLoading(true)
@@ -61,6 +71,44 @@ export default function AdminUsersPage() {
       setMessage({ type: 'success', text: 'Role updated successfully' })
     } catch (err: any) {
       setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update role' })
+    } finally {
+      setSavingId(null)
+    }
+  }
+
+  const openEdit = (u: UserItem) => {
+    setEditingUser(u)
+    setEditForm({ username: u.username, email: u.email || '', role: u.role, password: '' })
+  }
+
+  const handleEditSave = async () => {
+    if (!editingUser) return
+    setSavingId(editingUser.id)
+    setMessage(null)
+    try {
+      const body: Record<string, string> = { username: editForm.username, email: editForm.email, role: editForm.role }
+      if (editForm.password) body.password = editForm.password
+      const res = await api.put(`/api/admin/users/${editingUser.id}`, body)
+      setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, ...res.data } : u))
+      setMessage({ type: 'success', text: 'User updated' })
+      setEditingUser(null)
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to update user' })
+    } finally {
+      setSavingId(null)
+    }
+  }
+
+  const handleDelete = async (userId: string) => {
+    setSavingId(userId)
+    setMessage(null)
+    try {
+      await api.delete(`/api/admin/users/${userId}`)
+      setUsers(prev => prev.filter(u => u.id !== userId))
+      setMessage({ type: 'success', text: 'User deleted' })
+      setDeleteConfirm(null)
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to delete user' })
     } finally {
       setSavingId(null)
     }
@@ -136,21 +184,31 @@ export default function AdminUsersPage() {
                       {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
                     </td>
                     <td className="table-cell">
-                      {isMe ? (
-                        <span className="text-xs text-text-secondary italic">(you)</span>
-                      ) : u.role === 'ADMIN' ? (
-                        <span className="text-xs text-text-secondary">—</span>
-                      ) : (
-                        <select
-                          value={u.role}
-                          onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                          disabled={savingId === u.id}
-                          className="select-field text-xs py-1 w-24"
-                        >
-                          <option value="USER">USER</option>
-                          <option value="EDITOR">EDITOR</option>
-                        </select>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {isMe ? (
+                          <span className="text-xs text-text-secondary italic">(you)</span>
+                        ) : u.role === 'ADMIN' ? (
+                          <span className="text-xs text-text-secondary">—</span>
+                        ) : (
+                          <>
+                            <select
+                              value={u.role}
+                              onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                              disabled={savingId === u.id}
+                              className="select-field text-xs py-1 w-20"
+                            >
+                              <option value="USER">USER</option>
+                              <option value="EDITOR">EDITOR</option>
+                            </select>
+                            <button onClick={() => openEdit(u)} className="btn-secondary text-xs !px-2 !py-1" title="Edit">
+                              ✏️
+                            </button>
+                            <button onClick={() => setDeleteConfirm(u.id)} className="btn-secondary text-xs !px-2 !py-1 text-red-400" title="Delete">
+                              🗑️
+                            </button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -160,7 +218,6 @@ export default function AdminUsersPage() {
         </div>
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-4">
           <button
@@ -178,6 +235,58 @@ export default function AdminUsersPage() {
           >
             Next
           </button>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setEditingUser(null)}>
+          <div className="bg-surface border border-border rounded-xl p-6 w-full max-w-md mx-4" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold mb-4">Edit User: {editingUser.username}</h2>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Username</label>
+                <input className="input-field w-full" value={editForm.username} onChange={e => setEditForm(f => ({ ...f, username: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Email</label>
+                <input className="input-field w-full" value={editForm.email} onChange={e => setEditForm(f => ({ ...f, email: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">Role</label>
+                <select className="select-field w-full" value={editForm.role} onChange={e => setEditForm(f => ({ ...f, role: e.target.value }))}>
+                  <option value="USER">USER</option>
+                  <option value="EDITOR">EDITOR</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-text-secondary mb-1">New Password (leave blank to keep)</label>
+                <input type="password" className="input-field w-full" value={editForm.password} onChange={e => setEditForm(f => ({ ...f, password: e.target.value }))} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button onClick={() => setEditingUser(null)} className="btn-secondary text-sm">Cancel</button>
+              <button onClick={handleEditSave} disabled={savingId === editingUser.id} className="btn-primary text-sm">
+                {savingId === editingUser.id ? 'Saving...' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setDeleteConfirm(null)}>
+          <div className="bg-surface border border-border rounded-xl p-6 w-full max-w-sm mx-4" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold mb-2">Delete User?</h2>
+            <p className="text-sm text-text-secondary mb-4">This will permanently delete this user, their wallet, and all predictions. This cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setDeleteConfirm(null)} className="btn-secondary text-sm">Cancel</button>
+              <button onClick={() => handleDelete(deleteConfirm)} disabled={savingId === deleteConfirm} className="btn-primary text-sm bg-red-600 hover:bg-red-700">
+                {savingId === deleteConfirm ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

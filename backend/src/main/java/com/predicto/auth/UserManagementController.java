@@ -1,10 +1,12 @@
 package com.predicto.auth;
 
 import com.predicto.auth.dto.RoleUpdateRequest;
+import com.predicto.auth.dto.UpdateUserRequest;
 import com.predicto.auth.dto.UserSummaryDto;
 import com.predicto.auth.security.JwtUser;
 import com.predicto.common.enums.UserRole;
 import com.predicto.wallet.WalletRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -24,6 +28,8 @@ public class UserManagementController {
 
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final EntityManager entityManager;
 
     @GetMapping
     public ResponseEntity<Page<UserSummaryDto>> list(
@@ -85,5 +91,50 @@ public class UserManagementController {
                 wallet != null ? wallet.getBalance() : 0,
                 target.getCreatedAt());
         return ResponseEntity.ok(dto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @Valid @RequestBody UpdateUserRequest req) {
+        var target = userRepository.findById(id).orElse(null);
+        if (target == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (req.getUsername() != null) {
+            target.setUsername(req.getUsername());
+        }
+        if (req.getEmail() != null) {
+            target.setEmail(req.getEmail());
+        }
+        if (req.getRole() != null) {
+            try {
+                target.setRole(UserRole.valueOf(req.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Invalid role"));
+            }
+        }
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            target.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        }
+        userRepository.save(target);
+        var wallet = walletRepository.findByUserId(target.getId()).orElse(null);
+        var dto = new UserSummaryDto(
+                target.getId(), target.getUsername(), target.getDisplayName(),
+                target.getEmail(), target.getRole().name(),
+                wallet != null ? wallet.getBalance() : 0,
+                target.getCreatedAt());
+        return ResponseEntity.ok(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        entityManager.createNativeQuery("DELETE FROM prediction_entries WHERE user_id = :id").setParameter("id", id).executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM wallets WHERE user_id = :id").setParameter("id", id).executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
+        return ResponseEntity.ok(Map.of("message", "User deleted"));
     }
 }
