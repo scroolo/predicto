@@ -2,7 +2,9 @@ package com.predicto.admin;
 
 import com.predicto.auth.UserRepository;
 import com.predicto.betting.OddsCalculationService;
+import com.predicto.wallet.WalletRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
@@ -26,6 +28,7 @@ public class SyncTriggerController {
     private final LeagueRepository leagueRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final WalletRepository walletRepository;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -35,7 +38,8 @@ public class SyncTriggerController {
                                   MatchRepository matchRepository,
                                   LeagueRepository leagueRepository,
                                   UserRepository userRepository,
-                                  PasswordEncoder passwordEncoder) {
+                                  PasswordEncoder passwordEncoder,
+                                  WalletRepository walletRepository) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -45,6 +49,7 @@ public class SyncTriggerController {
         this.leagueRepository = leagueRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.walletRepository = walletRepository;
     }
 
     @PostMapping("/trigger")
@@ -174,10 +179,12 @@ public class SyncTriggerController {
 
     @PostMapping("/debug/delete-user")
     @ResponseBody
+    @Transactional
     public String deleteUser(@RequestParam String username) {
         try {
             return userRepository.findByUsername(username)
                 .map(u -> {
+                    walletRepository.deleteByUserId(u.getId());
                     userRepository.delete(u);
                     return "Deleted: " + username;
                 })
