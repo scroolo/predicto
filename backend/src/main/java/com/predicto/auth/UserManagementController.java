@@ -129,10 +129,12 @@ public class UserManagementController {
     @Transactional
     public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
         try {
-            entityManager.createNativeQuery("DELETE FROM prediction_entries WHERE prediction_id IN (SELECT id FROM predictions WHERE user_id = :id)").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pickban_predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM bets WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM f1_predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM leaderboard_entries WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM rewards WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM wallets WHERE user_id = :id").setParameter("id", id).executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM refresh_tokens WHERE user_id = :id").setParameter("id", id).executeUpdate();
             entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
             return ResponseEntity.ok("Deleted: " + id);
         } catch (Exception e) {
