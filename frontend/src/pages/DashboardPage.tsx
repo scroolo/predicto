@@ -43,7 +43,6 @@ export default function DashboardPage() {
         data.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
         setMatches(data)
         setLeagues(lRes.data ?? [])
-        console.log('Leagues from API:', (lRes.data ?? []).map((l: LeagueItem) => l.name).join(', '))
         const oddsPromises = data.map(async (m) => {
           try {
             const oRes = await api.get(`/api/matches/${m.id}/odds`)
@@ -124,7 +123,7 @@ export default function DashboardPage() {
     return map[s] || 'bg-gray-700 text-gray-400'
   }
 
-  const MAIN_LEAGUES = ['LCK', 'LEC', 'LCS', 'LPL', 'Worlds', 'MSI', 'ESL Pro League', 'BLAST Premier', 'IEM', 'PGL Major', 'BLAST.tv Major']
+  const MAIN_LEAGUES = ['LCK', 'LEC', 'LCS', 'LPL', 'Worlds', 'Mid-Season Invitational', 'EMEA Masters', 'LTA', 'LTA North', 'LTA South', 'PCS', 'LCO', 'VCS', 'LCP']
   const mainLeagues = leagues.filter(l => MAIN_LEAGUES.some(name => l.name.includes(name)))
   const otherLeagues = leagues.filter(l => !MAIN_LEAGUES.some(name => l.name.includes(name)))
 
