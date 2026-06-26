@@ -1,5 +1,6 @@
 package com.predicto.betting;
 
+import com.predicto.achievement.AchievementService;
 import com.predicto.auth.User;
 import com.predicto.betting.dto.BetResponse;
 import com.predicto.betting.dto.PlaceBetRequest;
@@ -35,6 +36,7 @@ public class BettingService {
     private final ScoreOddsRepository scoreOddsRepository;
     private final PlayerRepository playerRepository;
     private final SeasonRepository seasonRepository;
+    private final AchievementService achievementService;
 
     private static final long LOCK_WINDOW_MINUTES = 15;
 
@@ -151,6 +153,7 @@ public class BettingService {
                 .build();
 
         betRepository.save(bet);
+        achievementService.checkAndAward(user.getId(), "bet_placed");
         return BetResponse.from(bet);
     }
 

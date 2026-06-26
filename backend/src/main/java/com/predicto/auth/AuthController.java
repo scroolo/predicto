@@ -1,5 +1,6 @@
 package com.predicto.auth;
 
+import com.predicto.achievement.AchievementService;
 import com.predicto.auth.dto.LoginRequest;
 import com.predicto.auth.dto.RegisterRequest;
 import com.predicto.auth.security.JwtUser;
@@ -39,6 +40,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final RankService rankService;
     private final EmailService emailService;
+    private final AchievementService achievementService;
 
     @Value("${app.cookie.secure:false}")
     private boolean cookieSecure;
@@ -72,6 +74,8 @@ public class AuthController {
 
         walletRepository.save(Wallet.builder().user(user).lolElo(100).cs2Elo(100).build());
 
+        achievementService.checkAndAward(user.getId(), "daily_login");
+
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole().name());
         ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
                 .httpOnly(true)
@@ -95,6 +99,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid credentials"));
         }
+        achievementService.checkAndAward(user.getId(), "daily_login");
+
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), user.getRole().name());
         ResponseCookie cookie = ResponseCookie.from("predicto_token", token)
                 .httpOnly(true)
