@@ -58,6 +58,24 @@ public class AdminArticleController {
         }
     }
 
+    @GetMapping("/debug/article-type")
+    @ResponseBody
+    public String debugType() {
+        try {
+            var result = entityManager.createNativeQuery(
+                "SELECT id::text, pg_typeof(id) FROM articles LIMIT 3"
+            ).getResultList();
+            StringBuilder sb = new StringBuilder();
+            for (Object row : result) {
+                Object[] cols = (Object[]) row;
+                sb.append("id=").append(cols[0]).append(", type=").append(cols[1]).append("\n");
+            }
+            return sb.length() > 0 ? sb.toString() : "No articles found";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CreateArticleRequest req,
                                     @AuthenticationPrincipal JwtUser jwtUser) {
