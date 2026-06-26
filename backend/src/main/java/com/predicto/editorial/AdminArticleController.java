@@ -6,6 +6,7 @@ import com.predicto.auth.security.JwtUser;
 import com.predicto.common.enums.Game;
 import com.predicto.editorial.dto.CreateArticleRequest;
 import com.predicto.editorial.dto.UpdateArticleRequest;
+import jakarta.persistence.EntityManager;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class AdminArticleController {
     private final ArticleRepository articleRepository;
     private final ArticleService articleService;
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
     @GetMapping
     public ResponseEntity<Page<Article>> list(@RequestParam(defaultValue = "0") int page,
@@ -41,6 +43,19 @@ public class AdminArticleController {
         var article = articleRepository.findById(id);
         long count = articleRepository.count();
         return "found=" + article.isPresent() + ", total=" + count + ", id=" + id;
+    }
+
+    @GetMapping("/debug/article-sql/{id}")
+    @ResponseBody
+    public String debugSql(@PathVariable String id) {
+        try {
+            var result = entityManager.createNativeQuery(
+                "SELECT id, title FROM articles WHERE id = :id::uuid"
+            ).setParameter("id", id).getResultList();
+            return "SQL result count: " + result.size();
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 
     @PostMapping
