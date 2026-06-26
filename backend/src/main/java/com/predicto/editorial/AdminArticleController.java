@@ -148,12 +148,15 @@ public class AdminArticleController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody UpdateArticleRequest req) {
         log.info("PUT article: id={}", id);
-        var article = findArticleById(id);
-        log.info("Article found: {}", article.isPresent());
-        if (article.isEmpty()) return ResponseEntity.notFound().build();
-        var a = article.get();
+        var articles = entityManager.createQuery(
+            "SELECT a FROM Article a WHERE a.id = :id", Article.class
+        ).setParameter("id", id).getResultList();
+        log.info("Article found: {}", !articles.isEmpty());
+        if (articles.isEmpty()) return ResponseEntity.notFound().build();
+        var a = articles.get(0);
 
         if (req.getTitle() != null) a.setTitle(articleService.sanitize(req.getTitle()));
         if (req.getSummary() != null) a.setSummary(articleService.sanitize(req.getSummary()));
@@ -170,11 +173,6 @@ public class AdminArticleController {
         if (req.getFeatured() != null) a.setFeatured(req.getFeatured());
         if (req.getLanguage() != null) a.setLanguage(req.getLanguage());
 
-        if (a.getStatus() == ArticleStatus.DRAFT && req.getFeatured() != null && req.getFeatured()) {
-            // allow featuring even in draft
-        }
-
-        articleRepository.save(a);
         return ResponseEntity.ok(a);
     }
 
