@@ -89,6 +89,9 @@ public class AdminArticleController {
     @ResponseBody
     public String debugJpql(@PathVariable UUID id) {
         try {
+            org.hibernate.Session session = entityManager.unwrap(org.hibernate.Session.class);
+            var byId = session.byId(Article.class).load(id);
+
             var result = entityManager.createQuery(
                 "SELECT a FROM Article a WHERE a.id = :id", Article.class
             ).setParameter("id", id).getResultList();
@@ -96,9 +99,6 @@ public class AdminArticleController {
             var nativeResult = entityManager.createNativeQuery(
                 "SELECT a.id, a.title FROM articles a WHERE a.id = ?"
             ).setParameter(1, id).getResultList();
-
-            var byId = entityManager.unwrap(org.hibernate.Session.class)
-                .byId(Article.class).load(id);
 
             return "JPQL=" + result.size() + ", NATIVE(UUID param)=" + nativeResult.size()
                 + ", byId=" + (byId != null) + ", id=" + id;
