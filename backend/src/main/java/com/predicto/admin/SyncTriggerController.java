@@ -1,8 +1,10 @@
 package com.predicto.admin;
 
 import com.predicto.betting.OddsCalculationService;
+import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
+import com.predicto.common.enums.Game;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,19 +21,22 @@ public class SyncTriggerController {
     private final OddsCalculationService oddsCalculationService;
     private final HistoricalSyncService historicalSyncService;
     private final MatchRepository matchRepository;
+    private final LeagueRepository leagueRepository;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
                                   SyncRunRepository syncRunRepository,
                                   OddsCalculationService oddsCalculationService,
                                   HistoricalSyncService historicalSyncService,
-                                  MatchRepository matchRepository) {
+                                  MatchRepository matchRepository,
+                                  LeagueRepository leagueRepository) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
         this.oddsCalculationService = oddsCalculationService;
         this.historicalSyncService = historicalSyncService;
         this.matchRepository = matchRepository;
+        this.leagueRepository = leagueRepository;
     }
 
     @PostMapping("/trigger")
@@ -95,6 +100,14 @@ public class SyncTriggerController {
     @ResponseBody
     public List<String> getGames() {
         return matchRepository.findDistinctGames();
+    }
+
+    @GetMapping("/debug/cs2leagues")
+    @ResponseBody
+    public List<String> getCs2Leagues() {
+        return leagueRepository.findByGame(Game.CS2).stream()
+            .map(l -> l.getName())
+            .collect(java.util.stream.Collectors.toList());
     }
 
     @GetMapping("/runs")
