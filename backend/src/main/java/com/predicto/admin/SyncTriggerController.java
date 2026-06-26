@@ -2,6 +2,7 @@ package com.predicto.admin;
 
 import com.predicto.auth.UserRepository;
 import com.predicto.betting.OddsCalculationService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import com.predicto.catalog.LeagueRepository;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.sync.*;
@@ -24,6 +25,7 @@ public class SyncTriggerController {
     private final MatchRepository matchRepository;
     private final LeagueRepository leagueRepository;
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public SyncTriggerController(PandaScoreSyncService pandaScoreSyncService,
                                   LockJobService lockJobService,
@@ -32,7 +34,8 @@ public class SyncTriggerController {
                                   HistoricalSyncService historicalSyncService,
                                   MatchRepository matchRepository,
                                   LeagueRepository leagueRepository,
-                                  UserRepository userRepository) {
+                                  UserRepository userRepository,
+                                  PasswordEncoder passwordEncoder) {
         this.pandaScoreSyncService = pandaScoreSyncService;
         this.lockJobService = lockJobService;
         this.syncRunRepository = syncRunRepository;
@@ -41,6 +44,7 @@ public class SyncTriggerController {
         this.matchRepository = matchRepository;
         this.leagueRepository = leagueRepository;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/trigger")
@@ -120,6 +124,18 @@ public class SyncTriggerController {
         return userRepository.findByUsername(username)
             .map(u -> Map.of("id", u.getId(), "username", u.getUsername(), "role", u.getRole(), "hasPassword", u.getPassword() != null))
             .orElse(Map.of("error", "not found"));
+    }
+
+    @PostMapping("/debug/reset-password")
+    @ResponseBody
+    public String resetPassword(@RequestParam String username, @RequestParam String password) {
+        return userRepository.findByUsername(username)
+            .map(u -> {
+                u.setPassword(passwordEncoder.encode(password));
+                userRepository.save(u);
+                return "Password reset for: " + username;
+            })
+            .orElse("User not found: " + username);
     }
 
     @GetMapping("/runs")
