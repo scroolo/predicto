@@ -1,12 +1,14 @@
 package com.predicto.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.net.http.*;
 import java.net.URI;
 import java.util.Map;
 
+@Slf4j
 @Service
 public class AiNewsService {
 
@@ -57,7 +59,11 @@ public class AiNewsService {
         HttpResponse<String> response = HttpClient.newHttpClient()
             .send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        var responseMap = mapper.readValue(response.body(), Map.class);
+        String responseBody = response.body();
+        log.info("Anthropic API status: {}", response.statusCode());
+        log.info("Anthropic API response: {}", responseBody);
+
+        var responseMap = mapper.readValue(responseBody, Map.class);
         var content = (java.util.List<?>) responseMap.get("content");
         var firstBlock = (Map<?, ?>) content.get(0);
         return (String) firstBlock.get("text");
