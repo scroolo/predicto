@@ -43,6 +43,7 @@ export default function DashboardPage() {
         data.sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
         setMatches(data)
         setLeagues(lRes.data ?? [])
+        console.log('Leagues from API:', (lRes.data ?? []).map((l: LeagueItem) => l.name))
         const oddsPromises = data.map(async (m) => {
           try {
             const oRes = await api.get(`/api/matches/${m.id}/odds`)
