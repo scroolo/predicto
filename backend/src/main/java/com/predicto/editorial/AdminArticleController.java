@@ -177,6 +177,7 @@ public class AdminArticleController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         if (findArticleById(id).isEmpty()) return ResponseEntity.notFound().build();
         entityManager.createQuery("DELETE FROM Article a WHERE a.id = :id")
