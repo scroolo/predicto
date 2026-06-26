@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.time.OffsetDateTime;
 import java.util.*;
 
 @Component
@@ -40,8 +39,6 @@ public class NewsAggregatorJob {
                 article.setStatus(ArticleStatus.DRAFT);
                 article.setGame(Game.valueOf(item.source().sport()));
                 article.setSourceUrl(item.link());
-                article.setCreatedAt(OffsetDateTime.now());
-
                 // Required fields
                 String slugBase = item.title().toLowerCase()
                     .replaceAll("[^a-z0-9\\s]", "")
@@ -52,7 +49,8 @@ public class NewsAggregatorJob {
                 article.setSummary(content.substring(0, Math.min(200, content.length())));
                 article.setCategory(ArticleCategory.NEWS);
 
-                articleRepository.save(article);
+                Article saved = articleRepository.save(article);
+                log.info("NewsAggregatorJob: saved article with id={}", saved.getId());
                 processedUrls.add(item.link());
                 log.info("NewsAggregatorJob: created draft article: {}", item.title());
                 Thread.sleep(2000); // rate limit
