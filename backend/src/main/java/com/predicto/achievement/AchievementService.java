@@ -81,14 +81,22 @@ public class AchievementService {
     }
 
     private void tryAward(UUID userId, String achievementId, boolean condition) {
+        log.info("tryAward: userId={}, achievementId={}, condition={}", userId, achievementId, condition);
         if (!condition) return;
-        if (userAchievementRepository.findByUserIdAndAchievementId(userId, achievementId).isPresent()) return;
+        if (userAchievementRepository.findByUserIdAndAchievementId(userId, achievementId).isPresent()) {
+            log.info("Already has achievement: {}", achievementId);
+            return;
+        }
         var achievement = achievementRepository.findById(achievementId).orElse(null);
-        if (achievement == null) return;
+        if (achievement == null) {
+            log.warn("Achievement not found in DB: {}", achievementId);
+            return;
+        }
         var ua = new UserAchievement();
         ua.setUserId(userId);
         ua.setAchievement(achievement);
         userAchievementRepository.save(ua);
+        log.info("Achievement awarded: userId={}, achievementId={}", userId, achievementId);
     }
 
     private long calculateWinStreak(List<com.predicto.betting.Bet> bets) {
