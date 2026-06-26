@@ -128,13 +128,18 @@ public class UserManagementController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+        try {
+            if (!userRepository.existsById(id)) {
+                return ResponseEntity.notFound().build();
+            }
+            entityManager.createNativeQuery("DELETE FROM prediction_entries WHERE prediction_id IN (SELECT id FROM predictions WHERE user_id = :id)").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM wallets WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM refresh_tokens WHERE user_id = :id").setParameter("id", id).executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
+            return ResponseEntity.ok(Map.of("message", "User deleted"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("message", "Delete failed: " + e.getMessage()));
         }
-        entityManager.createNativeQuery("DELETE FROM prediction_entries WHERE user_id = :id").setParameter("id", id).executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM predictions WHERE user_id = :id").setParameter("id", id).executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM wallets WHERE user_id = :id").setParameter("id", id).executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM users WHERE id = :id").setParameter("id", id).executeUpdate();
-        return ResponseEntity.ok(Map.of("message", "User deleted"));
     }
 }
