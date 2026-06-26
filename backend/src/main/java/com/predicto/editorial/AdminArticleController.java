@@ -139,10 +139,17 @@ public class AdminArticleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(article);
     }
 
+    private java.util.Optional<Article> findArticleById(UUID id) {
+        var list = entityManager.createQuery(
+            "SELECT a FROM Article a WHERE a.id = :id", Article.class
+        ).setParameter("id", id).getResultList();
+        return list.isEmpty() ? java.util.Optional.empty() : java.util.Optional.of(list.get(0));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable UUID id, @Valid @RequestBody UpdateArticleRequest req) {
         log.info("PUT article: id={}", id);
-        var article = articleRepository.findById(id);
+        var article = findArticleById(id);
         log.info("Article found: {}", article.isPresent());
         if (article.isEmpty()) return ResponseEntity.notFound().build();
         var a = article.get();
@@ -172,14 +179,15 @@ public class AdminArticleController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
-        if (!articleRepository.existsById(id)) return ResponseEntity.notFound().build();
-        articleRepository.deleteById(id);
+        if (findArticleById(id).isEmpty()) return ResponseEntity.notFound().build();
+        entityManager.createQuery("DELETE FROM Article a WHERE a.id = :id")
+            .setParameter("id", id).executeUpdate();
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/publish")
     public ResponseEntity<?> publish(@PathVariable UUID id) {
-        var article = articleRepository.findById(id);
+        var article = findArticleById(id);
         if (article.isEmpty()) return ResponseEntity.notFound().build();
         var a = article.get();
         a.setStatus(ArticleStatus.PUBLISHED);
@@ -190,7 +198,7 @@ public class AdminArticleController {
 
     @PatchMapping("/{id}/unpublish")
     public ResponseEntity<?> unpublish(@PathVariable UUID id) {
-        var article = articleRepository.findById(id);
+        var article = findArticleById(id);
         if (article.isEmpty()) return ResponseEntity.notFound().build();
         var a = article.get();
         a.setStatus(ArticleStatus.DRAFT);
@@ -200,7 +208,7 @@ public class AdminArticleController {
 
     @PatchMapping("/{id}/feature")
     public ResponseEntity<?> toggleFeature(@PathVariable UUID id) {
-        var article = articleRepository.findById(id);
+        var article = findArticleById(id);
         if (article.isEmpty()) return ResponseEntity.notFound().build();
         var a = article.get();
         a.setFeatured(!a.getFeatured());
