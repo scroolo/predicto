@@ -77,6 +77,9 @@ public class OddsCalculationService {
             oddsA = clamp(round(oddsA * adjustA));
             oddsB = clamp(round(oddsB * adjustB));
 
+            log.info("Match {}: popularityA={} popularityB={} adjustA={} adjustB={} -> finalOddsA={} finalOddsB={}",
+                match.getId(), popularityA, popularityB, adjustA, adjustB, oddsA, oddsB);
+
             log.info("Match {}: betsA={} weightA={} betsB={} weightB={} -> oddsA={} oddsB={}",
                 match.getId(), betsA.size(), weightA, betsB.size(), weightB, oddsA, oddsB);
         }
@@ -94,6 +97,7 @@ public class OddsCalculationService {
         odds.setOddsValue(BigDecimal.valueOf(oddsValue));
         odds.setSetByUser(adminUser);
         odds.setUpdatedAt(OffsetDateTime.now());
+        log.info("Saving odds: match={} team={} odds={}", match.getId(), team.getId(), oddsValue);
         matchOddsRepository.save(odds);
     }
 
