@@ -63,6 +63,9 @@ public class OddsCalculationService {
         double weightB = betsB.stream().mapToDouble(b -> Math.sqrt(b.getStake())).sum();
         double totalWeight = weightA + weightB;
 
+        log.info("Match {}: betsA count={} betsB count={} weightA={} weightB={} totalWeight={}",
+            match.getId(), betsA.size(), betsB.size(), weightA, weightB, totalWeight);
+
         if (totalWeight > 0 && (betsA.size() + betsB.size()) >= 3) {
             double popularityA = weightA / totalWeight;
             double popularityB = weightB / totalWeight;
