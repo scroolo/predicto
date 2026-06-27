@@ -66,7 +66,7 @@ public class OddsCalculationService {
         log.info("Match {}: betsA count={} betsB count={} weightA={} weightB={} totalWeight={}",
             match.getId(), betsA.size(), betsB.size(), weightA, weightB, totalWeight);
 
-        if (totalWeight > 0 && (betsA.size() + betsB.size()) >= 3) {
+        if (totalWeight > 0 && (betsA.size() + betsB.size()) >= 1) {
             double popularityA = weightA / totalWeight;
             double popularityB = weightB / totalWeight;
 
