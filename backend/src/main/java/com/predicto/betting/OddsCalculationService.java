@@ -75,6 +75,23 @@ public class OddsCalculationService {
                 match.getId(), teamAWins, teamATotal, winRateA, oddsA, oddsB);
         }
 
+        // Popularity adjustment based on current bets
+        long betsOnA = matchOddsRepository.countBetsByTeamAndMatch(teamA.getId(), match.getId());
+        long betsOnB = matchOddsRepository.countBetsByTeamAndMatch(teamB.getId(), match.getId());
+        long totalBets = betsOnA + betsOnB;
+
+        if (totalBets >= 5) {
+            double popularityA = (double) betsOnA / totalBets;
+            double popularityB = (double) betsOnB / totalBets;
+            // If team is popular (>50% bets), reduce odds slightly; if unpopular, increase
+            double adjustA = 1.0 + (0.5 - popularityA) * 0.3;
+            double adjustB = 1.0 + (0.5 - popularityB) * 0.3;
+            oddsA = clamp(round(oddsA * adjustA));
+            oddsB = clamp(round(oddsB * adjustB));
+            log.info("Match {}: popularity adjustment betsA={} betsB={} -> oddsA={} oddsB={}",
+                match.getId(), betsOnA, betsOnB, oddsA, oddsB);
+        }
+
         saveOddsForTeam(match, teamA, oddsA);
         saveOddsForTeam(match, teamB, oddsB);
     }
