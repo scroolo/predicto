@@ -154,7 +154,14 @@ public class BettingService {
                 .build();
 
         betRepository.save(bet);
-        oddsCalculationService.calculateAndSaveOdds(match);
+        org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+            new org.springframework.transaction.support.TransactionSynchronizationAdapter() {
+                @Override
+                public void afterCommit() {
+                    oddsCalculationService.calculateAndSaveOdds(match);
+                }
+            }
+        );
         achievementService.checkAndAward(user.getId(), "bet_placed");
         return BetResponse.from(bet);
     }
