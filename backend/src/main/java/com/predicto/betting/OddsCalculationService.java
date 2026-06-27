@@ -2,6 +2,8 @@ package com.predicto.betting;
 
 import com.predicto.auth.User;
 import com.predicto.auth.UserRepository;
+import com.predicto.betting.Bet;
+import com.predicto.betting.BetRepository;
 import com.predicto.catalog.Match;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.Team;
@@ -22,74 +24,58 @@ import java.util.UUID;
 public class OddsCalculationService {
 
     private static final Logger log = LoggerFactory.getLogger(OddsCalculationService.class);
-    private static final int HISTORY_LIMIT = 20;
-    private static final int MIN_MATCHES_FOR_CALC = 3;
-    private static final double MARGIN = 1.05;
-    private static final double DEFAULT_ODDS = 1.90;
     private static final double MIN_ODDS = 1.10;
     private static final double MAX_ODDS = 9.99;
 
     private final MatchRepository matchRepository;
     private final MatchOddsRepository matchOddsRepository;
     private final UserRepository userRepository;
+    private final BetRepository betRepository;
 
     private User adminUser;
 
     public OddsCalculationService(MatchRepository matchRepository,
                                    MatchOddsRepository matchOddsRepository,
-                                   UserRepository userRepository) {
+                                   UserRepository userRepository,
+                                   BetRepository betRepository) {
         this.matchRepository = matchRepository;
         this.matchOddsRepository = matchOddsRepository;
         this.userRepository = userRepository;
+        this.betRepository = betRepository;
     }
 
     public void calculateAndSaveOdds(Match match) {
         if (match.getTeamA() == null || match.getTeamB() == null) return;
-
         resolveAdminUser();
 
         Team teamA = match.getTeamA();
         Team teamB = match.getTeamB();
 
-        int teamATotal = countFinishedMatches(teamA.getId(), match.getId());
-        int teamBTotal = countFinishedMatches(teamB.getId(), match.getId());
+        // Base odds
+        double oddsA = 1.85;
+        double oddsB = 1.85;
 
-        double oddsA;
-        double oddsB;
+        // Fetch current bets — weighted by sqrt(stake) to prevent whale manipulation
+        List<Bet> betsA = betRepository.findPendingByMatchAndTeam(match.getId(), teamA.getId());
+        List<Bet> betsB = betRepository.findPendingByMatchAndTeam(match.getId(), teamB.getId());
 
-        if (teamATotal < MIN_MATCHES_FOR_CALC || teamBTotal < MIN_MATCHES_FOR_CALC) {
-            oddsA = DEFAULT_ODDS;
-            oddsB = DEFAULT_ODDS;
-            log.info("Match {}: insufficient history (teamA={}, teamB={} matches), using default odds",
-                match.getId(), teamATotal, teamBTotal);
-        } else {
-            int teamAWins = countWins(teamA.getId(), match.getId());
-            double winRateA = Math.min(0.9, Math.max(0.1,
-                (double) teamAWins / Math.min(teamATotal, HISTORY_LIMIT)));
-            double winRateB = 1.0 - winRateA;
+        double weightA = betsA.stream().mapToDouble(b -> Math.sqrt(b.getStake())).sum();
+        double weightB = betsB.stream().mapToDouble(b -> Math.sqrt(b.getStake())).sum();
+        double totalWeight = weightA + weightB;
 
-            oddsA = clamp(round(MARGIN / winRateA));
-            oddsB = clamp(round(MARGIN / winRateB));
+        if (totalWeight > 0 && (betsA.size() + betsB.size()) >= 3) {
+            double popularityA = weightA / totalWeight;
+            double popularityB = weightB / totalWeight;
 
-            log.info("Match {}: teamA wins={}/{} winRate={} odds={}, teamB odds={}",
-                match.getId(), teamAWins, teamATotal, winRateA, oddsA, oddsB);
-        }
+            // Max adjustment ±0.30 from base
+            double adjustA = 1.0 + (0.5 - popularityA) * 0.60;
+            double adjustB = 1.0 + (0.5 - popularityB) * 0.60;
 
-        // Popularity adjustment based on current bets
-        long betsOnA = matchOddsRepository.countBetsByTeamAndMatch(teamA.getId(), match.getId());
-        long betsOnB = matchOddsRepository.countBetsByTeamAndMatch(teamB.getId(), match.getId());
-        long totalBets = betsOnA + betsOnB;
-
-        if (totalBets >= 5) {
-            double popularityA = (double) betsOnA / totalBets;
-            double popularityB = (double) betsOnB / totalBets;
-            // If team is popular (>50% bets), reduce odds slightly; if unpopular, increase
-            double adjustA = 1.0 + (0.5 - popularityA) * 0.3;
-            double adjustB = 1.0 + (0.5 - popularityB) * 0.3;
             oddsA = clamp(round(oddsA * adjustA));
             oddsB = clamp(round(oddsB * adjustB));
-            log.info("Match {}: popularity adjustment betsA={} betsB={} -> oddsA={} oddsB={}",
-                match.getId(), betsOnA, betsOnB, oddsA, oddsB);
+
+            log.info("Match {}: betsA={} weightA={} betsB={} weightB={} -> oddsA={} oddsB={}",
+                match.getId(), betsA.size(), weightA, betsB.size(), weightB, oddsA, oddsB);
         }
 
         saveOddsForTeam(match, teamA, oddsA);
@@ -106,14 +92,6 @@ public class OddsCalculationService {
         odds.setSetByUser(adminUser);
         odds.setUpdatedAt(OffsetDateTime.now());
         matchOddsRepository.save(odds);
-    }
-
-    private int countWins(UUID teamId, UUID excludeMatchId) {
-        return matchRepository.countWinsByTeamId(teamId, excludeMatchId, HISTORY_LIMIT);
-    }
-
-    private int countFinishedMatches(UUID teamId, UUID excludeMatchId) {
-        return matchRepository.countFinishedMatchesByTeamId(teamId, excludeMatchId, HISTORY_LIMIT);
     }
 
     private void resolveAdminUser() {
