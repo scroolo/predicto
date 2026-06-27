@@ -44,6 +44,7 @@ public class OddsCalculationService {
         this.betRepository = betRepository;
     }
 
+    @Transactional
     public void calculateAndSaveOdds(Match match) {
         if (match.getTeamA() == null || match.getTeamB() == null) return;
         resolveAdminUser();
@@ -89,16 +90,20 @@ public class OddsCalculationService {
     }
 
     private void saveOddsForTeam(Match match, Team team, double oddsValue) {
-        MatchOdds odds = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), team.getId())
-            .orElse(MatchOdds.builder()
-                .match(match)
-                .team(team)
-                .build());
-        odds.setOddsValue(BigDecimal.valueOf(oddsValue));
-        odds.setSetByUser(adminUser);
-        odds.setUpdatedAt(OffsetDateTime.now());
-        log.info("Saving odds: match={} team={} odds={}", match.getId(), team.getId(), oddsValue);
-        matchOddsRepository.save(odds);
+        try {
+            MatchOdds odds = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), team.getId())
+                .orElse(MatchOdds.builder()
+                    .match(match)
+                    .team(team)
+                    .build());
+            odds.setOddsValue(BigDecimal.valueOf(oddsValue));
+            odds.setSetByUser(adminUser);
+            odds.setUpdatedAt(OffsetDateTime.now());
+            matchOddsRepository.save(odds);
+            log.info("Saved odds successfully: match={} team={} odds={}", match.getId(), team.getId(), oddsValue);
+        } catch (Exception e) {
+            log.error("Failed to save odds: match={} team={} odds={} error={}", match.getId(), team.getId(), oddsValue, e.getMessage(), e);
+        }
     }
 
     private void resolveAdminUser() {
