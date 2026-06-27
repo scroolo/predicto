@@ -103,6 +103,8 @@ export default function AdminArticlesPage() {
     try {
       const body = { title: title.trim(), summary: summary.trim(), content, coverImageUrl: coverImageUrl || null, category, game, language, featured }
       if (editingId) {
+        console.log('Saving article, editingId:', editingId)
+        console.log('PUT URL:', `/api/admin/articles/${editingId}`)
         await api.put(`/api/admin/articles/${editingId}`, body)
         if (publishAfter) {
           await api.patch(`/api/admin/articles/${editingId}/publish`)

@@ -21,7 +21,7 @@ public class NewsAggregatorJob {
     private final ArticleRepository articleRepository;
     private final Set<String> processedUrls = Collections.synchronizedSet(new HashSet<>());
 
-    @Scheduled(fixedDelay = 3600000)
+    // @Scheduled(fixedDelay = 3600000)
     public void run() {
         processedUrls.clear();
         log.info("NewsAggregatorJob: starting...");
