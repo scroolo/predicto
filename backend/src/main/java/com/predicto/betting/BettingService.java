@@ -37,6 +37,7 @@ public class BettingService {
     private final PlayerRepository playerRepository;
     private final SeasonRepository seasonRepository;
     private final AchievementService achievementService;
+    private final OddsCalculationService oddsCalculationService;
 
     private static final long LOCK_WINDOW_MINUTES = 15;
 
@@ -153,6 +154,7 @@ public class BettingService {
                 .build();
 
         betRepository.save(bet);
+        oddsCalculationService.calculateAndSaveOdds(match);
         achievementService.checkAndAward(user.getId(), "bet_placed");
         return BetResponse.from(bet);
     }
