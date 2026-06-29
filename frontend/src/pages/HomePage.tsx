@@ -42,7 +42,7 @@ interface MatchItem {
 const categoryLabels: Record<string, string> = {
   NEWS: 'Správy',
   ANALYSIS: 'Analýza',
-  TIPS: 'Tipy',
+  TIPS: 'Predikcie',
 }
 
 const getCategoryLabel = (cat: string, t: (key: string, opts?: Record<string, unknown>) => string) => {

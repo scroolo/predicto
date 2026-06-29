@@ -94,7 +94,7 @@ export default function AdminPredictionsPage() {
           onClick={() => setTab('bets')}
           className={`px-3 py-1.5 text-xs rounded-md transition ${tab === 'bets' ? 'bg-accent-primary text-white font-semibold' : 'text-text-secondary hover:text-text-primary'}`}
         >
-          Tipy ({bets.length})
+          Predikcie ({bets.length})
         </button>
         <button
           onClick={() => setTab('f1')}
@@ -108,7 +108,7 @@ export default function AdminPredictionsPage() {
         <div className="bg-surface border border-border rounded-xl overflow-x-auto">
           {bets.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-text-secondary">
-              <p className="text-sm">Žiadne tipy</p>
+              <p className="text-sm">Žiadne predikcie</p>
             </div>
           ) : (
             <table className="w-full text-sm">

@@ -422,13 +422,13 @@ export default function F1SessionPage() {
         )}
 
         {!isRace && session.status === 'UPCOMING' && (
-          <p className="text-text-secondary text-sm mb-6">Tipovanie je dostupné len pre hlavné preteky (Race)</p>
+          <p className="text-text-secondary text-sm mb-6">Predikcie sú dostupné len pre hlavné preteky (Race)</p>
         )}
 
         {/* Settled prediction results */}
         {existingPrediction?.status === 'SETTLED' && (
           <div className="card p-5">
-            <h3 className="text-sm font-semibold mb-3">Výsledok tipovania</h3>
+            <h3 className="text-sm font-semibold mb-3">Výsledok predikcie</h3>
             <div className="text-sm space-y-1">
               {existingPrediction.pointsEarned > 0 ? (
                 <p className="text-accent-primary font-bold">+{existingPrediction.pointsEarned} bodov</p>

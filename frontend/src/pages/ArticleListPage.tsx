@@ -19,13 +19,13 @@ interface ArticleItem {
 const categoryNames: Record<string, string> = {
   NEWS: 'News',
   ANALYSIS: 'Analysis',
-  TIPS: 'Tips',
+  TIPS: 'Predictions',
 }
 
 const categoryLabels: Record<string, string> = {
   NEWS: 'Správy',
   ANALYSIS: 'Analýzy',
-  TIPS: 'Tipy',
+  TIPS: 'Predikcie',
 }
 
 const categoryColors: Record<string, string> = {
