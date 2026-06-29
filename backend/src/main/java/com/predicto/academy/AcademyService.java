@@ -27,22 +27,27 @@ public class AcademyService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
 
+    @Transactional(readOnly = true)
     public List<Course> getPublishedCourses() {
         return courseRepository.findByPublishedTrueOrderByCategoryAscLevelAsc();
     }
 
+    @Transactional(readOnly = true)
     public List<Course> getCoursesByCategory(AcademyCategory category) {
         return courseRepository.findByCategoryAndPublishedTrueOrderByLevelAsc(category);
     }
 
+    @Transactional(readOnly = true)
     public List<Lesson> getLessonsForCourse(UUID courseId) {
         return lessonRepository.findByCourseIdAndPublishedTrueOrderBySortOrderAsc(courseId);
     }
 
+    @Transactional(readOnly = true)
     public List<QuizQuestion> getQuizForLesson(UUID lessonId) {
         return quizQuestionRepository.findByLessonIdOrderBySortOrderAsc(lessonId);
     }
 
+    @Transactional(readOnly = true)
     public AcademyProgressResponse getUserProgress(UUID userId) {
         List<UserLessonProgress> completed = progressRepository.findByUserIdAndCompletedTrue(userId);
         List<UserCertificate> certificates = certificateRepository.findByUserId(userId);
