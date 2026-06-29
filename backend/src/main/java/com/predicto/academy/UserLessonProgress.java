@@ -17,11 +17,11 @@ import java.time.OffsetDateTime;
 @Builder
 public class UserLessonProgress extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
