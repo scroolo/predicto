@@ -31,6 +31,9 @@ import F1SessionPage from './pages/F1SessionPage'
 import F1LeaderboardPage from './pages/F1LeaderboardPage'
 import AdminF1Page from './pages/AdminF1Page'
 import AdminAcademyPage from './pages/AdminAcademyPage'
+import AcademyPage from './pages/AcademyPage'
+import AcademyCoursePage from './pages/AcademyCoursePage'
+import AcademyLessonListPage from './pages/AcademyLessonListPage'
 import AdminRoute from './components/AdminRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -97,6 +100,9 @@ export default function App() {
         <Route path="/f1/meetings/:id" element={<F1MeetingPage />} />
         <Route path="/f1/sessions/:id" element={<F1SessionPage />} />
         <Route path="/f1/leaderboard" element={<F1LeaderboardPage />} />
+        <Route path="/academy" element={<AcademyPage />} />
+        <Route path="/academy/:sport" element={<AcademyCoursePage />} />
+        <Route path="/academy/:sport/course/:courseId" element={<AcademyLessonListPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       </PageTransition>
