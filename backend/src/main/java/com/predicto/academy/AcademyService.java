@@ -71,6 +71,10 @@ public class AcademyService {
         // Check if already completed
         var existing = progressRepository.findByUserIdAndLessonId(userId, lessonId);
         if (existing.isPresent() && existing.get().getCompleted()) {
+            // Already completed — just check achievements in case they weren't awarded
+            long totalCompleted = progressRepository.findByUserIdAndCompletedTrue(userId).size();
+            if (totalCompleted == 1) achievementService.awardById(userId, "academy_first_lesson");
+            if (totalCompleted >= 10) achievementService.awardById(userId, "academy_10_lessons");
             return new CompleteLessonResponse(0, existing.get().getQuizScore(), false);
         }
 
