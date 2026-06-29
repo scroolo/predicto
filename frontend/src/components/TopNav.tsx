@@ -36,6 +36,7 @@ export default function TopNav() {
       ],
     },
     { label: t('nav.f1'), to: '/f1', dropdown: null },
+    { label: 'Academy', to: '/academy', dropdown: null },
     { label: t('nav.leaderboard'), to: '/leaderboard', dropdown: null },
     {
       label: t('nav.predikcie'), to: '#', dropdown: [
