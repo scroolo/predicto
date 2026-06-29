@@ -186,6 +186,21 @@ export default function AdminAcademyPage() {
                   <span style={{ fontSize: "0.7rem", padding: "2px 8px", borderRadius: 4, background: course.published ? "#14532d" : "#1e293b", color: course.published ? "#4ade80" : "#94a3b8" }}>
                     {course.published ? "Publikovaný" : "Draft"}
                   </span>
+                  {!course.published && (
+                    <button onClick={async (e) => {
+                      e.stopPropagation();
+                      await fetch(`/api/admin/academy/courses/${course.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        credentials: "include",
+                        body: JSON.stringify({ ...course, published: true })
+                      });
+                      fetchCourses();
+                    }}
+                      style={{ background: "#1d4ed8", border: "none", color: "white", borderRadius: 4, padding: "2px 8px", cursor: "pointer", fontSize: "0.75rem" }}>
+                      Publikovať
+                    </button>
+                  )}
                   <button onClick={e => { e.stopPropagation(); deleteCourse(course.id); }}
                     style={{ background: "#7f1d1d", border: "none", color: "white", borderRadius: 4, padding: "2px 8px", cursor: "pointer", fontSize: "0.75rem" }}>
                     Zmazať
