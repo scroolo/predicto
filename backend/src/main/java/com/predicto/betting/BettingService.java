@@ -184,6 +184,7 @@ public class BettingService {
         walletRepository.save(wallet);
 
         betRepository.delete(bet);
+        oddsCalculationService.calculateAndSaveOdds(match);
     }
 
     @Transactional(readOnly = true)
