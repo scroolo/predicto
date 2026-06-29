@@ -95,6 +95,7 @@ public class AchievementService {
         var ua = new UserAchievement();
         ua.setUserId(userId);
         ua.setAchievement(achievement);
+        ua.setUnlockedAt(java.time.LocalDateTime.now());
         userAchievementRepository.save(ua);
         log.info("Achievement awarded: userId={}, achievementId={}", userId, achievementId);
     }
