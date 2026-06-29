@@ -19,7 +19,7 @@ const sports = [
   {
     key: "F1",
     name: "Formula 1",
-    logo: "https://www.stavkovekancelarie.com/res/img/x/articles/f1-2026.260305.jpg",
+    logo: "https://images.ctfassets.net/gy95mqeyjg28/4DCWEw7FYzoky73roJSLpZ/16228392768ba87c63147fee8d390e5b/launch_2026_mcl40_desktop-2.png?w=3840&q=75&fm=webp&fit=fill",
     description: "Pravidlá, stratégie a fungovanie sveta Formuly 1.",
     color: "#ef4444"
   }
