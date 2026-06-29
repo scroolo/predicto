@@ -125,9 +125,12 @@ export default function AcademyLessonPage() {
                         padding: "0.75rem 1rem", borderRadius: 8, border: "1px solid",
                         borderColor: isCorrect ? "#22c55e" : isWrong ? "#ef4444" : isSelected ? "#7c3aed" : "#334155",
                         background: isCorrect ? "#14532d" : isWrong ? "#7f1d1d" : isSelected ? "#2d1b69" : "#1e1e2e",
-                        color: "white", cursor: submitted ? "default" : "pointer", textAlign: "left"
+                        color: "white", cursor: submitted ? "default" : "pointer", textAlign: "left",
+                        display: "flex", justifyContent: "space-between", alignItems: "center"
                       }}>
-                      <strong>{opt}.</strong> {q[optionKeys[opt]] as string}
+                      <span><strong>{opt}.</strong> {q[optionKeys[opt]] as string}</span>
+                      {isCorrect && <span style={{ color: "#4ade80", fontSize: "0.85rem" }}>✓ Správne</span>}
+                      {isWrong && <span style={{ color: "#f87171", fontSize: "0.85rem" }}>✗ Nesprávne</span>}
                     </button>
                   );
                 })}

@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -75,10 +73,10 @@ public class AdminAcademyController {
         lesson = lessonRepository.save(lesson);
 
         for (var q : result.questions()) {
-            List<String> opts = new ArrayList<>(List.of(q.optionA(), q.optionB(), q.optionC(), q.optionD()));
-            Collections.shuffle(opts);
+            List<String> opts = new java.util.ArrayList<>(java.util.List.of(q.optionA(), q.optionB(), q.optionC(), q.optionD()));
+            java.util.Collections.shuffle(opts);
             int correctIdx = opts.indexOf(q.optionA());
-            String correctLetter = List.of("A","B","C","D").get(correctIdx);
+            String correctLetter = java.util.List.of("A","B","C","D").get(correctIdx);
 
             QuizQuestion question = QuizQuestion.builder()
                     .lesson(lesson)
