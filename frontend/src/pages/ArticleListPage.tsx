@@ -89,20 +89,39 @@ export default function ArticleListPage() {
       {article.coverImageUrl ? (
         <img src={article.coverImageUrl} alt={article.title} className="w-[120px] h-[80px] object-cover rounded-lg shrink-0" />
 ) : (
-  <div style={{
-    width: 120, height: 80, borderRadius: 8, flexShrink: 0, overflow: "hidden", position: "relative"
-  }}>
-    {article.game === "LOL" && (
-      <img src="https://i0.wp.com/highschool.latimes.com/wp-content/uploads/2021/09/league-of-legends.jpeg?fit=1200%2C668&ssl=1" 
-        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="LOL" />
-    )}
+  <div style={{ width: 120, height: 80, borderRadius: 8, flexShrink: 0, overflow: "hidden" }}>
     {article.game === "CS2" && (
-      <img src="https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg" 
-        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="CS2" />
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+        <defs><linearGradient id="cs2grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a1a2e"/><stop offset="100%" stopColor="#16213e"/></linearGradient></defs>
+        <rect width="120" height="80" fill="url(#cs2grad)"/>
+        <circle cx="60" cy="35" r="18" fill="none" stroke="#f59e0b" strokeWidth="2"/>
+        <circle cx="60" cy="35" r="4" fill="#f59e0b"/>
+        <line x1="60" y1="12" x2="60" y2="17" stroke="#f59e0b" strokeWidth="2"/>
+        <line x1="60" y1="53" x2="60" y2="58" stroke="#f59e0b" strokeWidth="2"/>
+        <line x1="37" y1="35" x2="42" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+        <line x1="78" y1="35" x2="83" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+        <text x="60" y="72" textAnchor="middle" fill="#f59e0b" fontSize="8" fontWeight="bold" fontFamily="Arial">CS2</text>
+      </svg>
+    )}
+    {article.game === "LOL" && (
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+        <defs><linearGradient id="lolgrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#0a0a1a"/><stop offset="100%" stopColor="#1a1a0a"/></linearGradient></defs>
+        <rect width="120" height="80" fill="url(#lolgrad)"/>
+        <polygon points="60,8 75,28 95,32 80,50 83,72 60,62 37,72 40,50 25,32 45,28" fill="none" stroke="#c89b3c" strokeWidth="2"/>
+        <polygon points="60,20 70,33 84,36 74,47 76,62 60,55 44,62 46,47 36,36 50,33" fill="#c89b3c" opacity="0.3"/>
+        <text x="60" y="76" textAnchor="middle" fill="#c89b3c" fontSize="7" fontWeight="bold" fontFamily="Arial">LEAGUE OF LEGENDS</text>
+      </svg>
     )}
     {article.game === "F1" && (
-      <img src="https://images.ctfassets.net/gy95mqeyjg28/4DCWEw7FYzoky73roJSLpZ/16228392768ba87c63147fee8d390e5b/launch_2026_mcl40_desktop-2.png?w=3840&q=75&fm=webp&fit=fill" 
-        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="F1" />
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+        <defs><linearGradient id="f1grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a0000"/><stop offset="100%" stopColor="#2a0a0a"/></linearGradient></defs>
+        <rect width="120" height="80" fill="url(#f1grad)"/>
+        <ellipse cx="60" cy="38" rx="35" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+        <ellipse cx="60" cy="38" rx="20" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+        <line x1="25" y1="38" x2="95" y2="38" stroke="#ef4444" strokeWidth="1.5"/>
+        <circle cx="60" cy="38" r="4" fill="#ef4444"/>
+        <text x="60" y="62" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold" fontFamily="Arial">FORMULA 1</text>
+      </svg>
     )}
     {(!article.game || (article.game !== "LOL" && article.game !== "CS2" && article.game !== "F1")) && (
       <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e2d45, #111827)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: "#94a3b8" }}>
