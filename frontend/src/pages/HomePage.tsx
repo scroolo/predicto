@@ -173,7 +173,44 @@ export default function HomePage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-text-secondary text-4xl">📰</div>
+                    <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+                      {heroMain.game === "CS2" && (
+                        <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                          <defs><linearGradient id="cs2h" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a1a2e"/><stop offset="100%" stopColor="#16213e"/></linearGradient></defs>
+                          <rect width="120" height="80" fill="url(#cs2h)"/>
+                          <circle cx="60" cy="35" r="18" fill="none" stroke="#f59e0b" strokeWidth="2"/>
+                          <circle cx="60" cy="35" r="4" fill="#f59e0b"/>
+                          <line x1="60" y1="12" x2="60" y2="17" stroke="#f59e0b" strokeWidth="2"/>
+                          <line x1="60" y1="53" x2="60" y2="58" stroke="#f59e0b" strokeWidth="2"/>
+                          <line x1="37" y1="35" x2="42" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+                          <line x1="78" y1="35" x2="83" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+                          <text x="60" y="72" textAnchor="middle" fill="#f59e0b" fontSize="8" fontWeight="bold" fontFamily="Arial">CS2</text>
+                        </svg>
+                      )}
+                      {heroMain.game === "LOL" && (
+                        <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                          <defs><linearGradient id="lolh" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#0a0a1a"/><stop offset="100%" stopColor="#1a1a0a"/></linearGradient></defs>
+                          <rect width="120" height="80" fill="url(#lolh)"/>
+                          <polygon points="60,8 75,28 95,32 80,50 83,72 60,62 37,72 40,50 25,32 45,28" fill="none" stroke="#c89b3c" strokeWidth="2"/>
+                          <polygon points="60,20 70,33 84,36 74,47 76,62 60,55 44,62 46,47 36,36 50,33" fill="#c89b3c" opacity="0.3"/>
+                          <text x="60" y="76" textAnchor="middle" fill="#c89b3c" fontSize="7" fontWeight="bold" fontFamily="Arial">LEAGUE OF LEGENDS</text>
+                        </svg>
+                      )}
+                      {heroMain.game === "F1" && (
+                        <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                          <defs><linearGradient id="f1h" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a0000"/><stop offset="100%" stopColor="#2a0a0a"/></linearGradient></defs>
+                          <rect width="120" height="80" fill="url(#f1h)"/>
+                          <ellipse cx="60" cy="38" rx="35" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+                          <ellipse cx="60" cy="38" rx="20" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+                          <line x1="25" y1="38" x2="95" y2="38" stroke="#ef4444" strokeWidth="1.5"/>
+                          <circle cx="60" cy="38" r="4" fill="#ef4444"/>
+                          <text x="60" y="62" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold" fontFamily="Arial">FORMULA 1</text>
+                        </svg>
+                      )}
+                      {(!heroMain.game || (heroMain.game !== "LOL" && heroMain.game !== "CS2" && heroMain.game !== "F1")) && (
+                        <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e2d45, #111827)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 48, color: "#94a3b8" }}>📰</div>
+                      )}
+                    </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute top-3 left-3 flex items-center gap-2">
@@ -212,7 +249,44 @@ export default function HomePage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-text-secondary text-3xl">📰</div>
+                        <div style={{ width: "100%", height: "100%", overflow: "hidden" }}>
+                          {article.game === "CS2" && (
+                            <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                              <defs><linearGradient id="cs2s" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a1a2e"/><stop offset="100%" stopColor="#16213e"/></linearGradient></defs>
+                              <rect width="120" height="80" fill="url(#cs2s)"/>
+                              <circle cx="60" cy="35" r="18" fill="none" stroke="#f59e0b" strokeWidth="2"/>
+                              <circle cx="60" cy="35" r="4" fill="#f59e0b"/>
+                              <line x1="60" y1="12" x2="60" y2="17" stroke="#f59e0b" strokeWidth="2"/>
+                              <line x1="60" y1="53" x2="60" y2="58" stroke="#f59e0b" strokeWidth="2"/>
+                              <line x1="37" y1="35" x2="42" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+                              <line x1="78" y1="35" x2="83" y2="35" stroke="#f59e0b" strokeWidth="2"/>
+                              <text x="60" y="72" textAnchor="middle" fill="#f59e0b" fontSize="8" fontWeight="bold" fontFamily="Arial">CS2</text>
+                            </svg>
+                          )}
+                          {article.game === "LOL" && (
+                            <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                              <defs><linearGradient id="lols" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#0a0a1a"/><stop offset="100%" stopColor="#1a1a0a"/></linearGradient></defs>
+                              <rect width="120" height="80" fill="url(#lols)"/>
+                              <polygon points="60,8 75,28 95,32 80,50 83,72 60,62 37,72 40,50 25,32 45,28" fill="none" stroke="#c89b3c" strokeWidth="2"/>
+                              <polygon points="60,20 70,33 84,36 74,47 76,62 60,55 44,62 46,47 36,36 50,33" fill="#c89b3c" opacity="0.3"/>
+                              <text x="60" y="76" textAnchor="middle" fill="#c89b3c" fontSize="7" fontWeight="bold" fontFamily="Arial">LEAGUE OF LEGENDS</text>
+                            </svg>
+                          )}
+                          {article.game === "F1" && (
+                            <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+                              <defs><linearGradient id="f1s" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#1a0000"/><stop offset="100%" stopColor="#2a0a0a"/></linearGradient></defs>
+                              <rect width="120" height="80" fill="url(#f1s)"/>
+                              <ellipse cx="60" cy="38" rx="35" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+                              <ellipse cx="60" cy="38" rx="20" ry="12" fill="none" stroke="#ef4444" strokeWidth="1.5"/>
+                              <line x1="25" y1="38" x2="95" y2="38" stroke="#ef4444" strokeWidth="1.5"/>
+                              <circle cx="60" cy="38" r="4" fill="#ef4444"/>
+                              <text x="60" y="62" textAnchor="middle" fill="#ef4444" fontSize="10" fontWeight="bold" fontFamily="Arial">FORMULA 1</text>
+                            </svg>
+                          )}
+                          {(!article.game || (article.game !== "LOL" && article.game !== "CS2" && article.game !== "F1")) && (
+                            <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e2d45, #111827)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, color: "#94a3b8" }}>📰</div>
+                          )}
+                        </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                       <div className="absolute top-2 left-2">
