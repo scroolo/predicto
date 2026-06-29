@@ -30,6 +30,7 @@ import F1MeetingPage from './pages/F1MeetingPage'
 import F1SessionPage from './pages/F1SessionPage'
 import F1LeaderboardPage from './pages/F1LeaderboardPage'
 import AdminF1Page from './pages/AdminF1Page'
+import AdminAcademyPage from './pages/AdminAcademyPage'
 import AdminRoute from './components/AdminRoute'
 import { useAuth } from './context/AuthContext'
 
@@ -88,6 +89,9 @@ export default function App() {
         } />
         <Route path="/admin/f1" element={
           <AdminRoute requiredRole="ADMIN"><AdminLayout><AdminF1Page /></AdminLayout></AdminRoute>
+        } />
+        <Route path="/admin/academy" element={
+          <AdminRoute requiredRole="ADMIN"><AdminLayout><AdminAcademyPage /></AdminLayout></AdminRoute>
         } />
         <Route path="/f1" element={<F1Page />} />
         <Route path="/f1/meetings/:id" element={<F1MeetingPage />} />

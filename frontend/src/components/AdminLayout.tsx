@@ -18,6 +18,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     { to: '/admin/f1', label: 'F1', roles: ['ADMIN'] },
     { to: '/admin/sync', label: t('admin.sync'), roles: ['ADMIN'] },
     { to: '/admin/users', label: t('admin.users'), roles: ['ADMIN'] },
+    { to: '/admin/academy', label: 'Academy', roles: ['ADMIN'] },
   ]
 
   if (loading) return <div className="flex items-center justify-center min-h-screen bg-bg text-text-secondary">{t('common.nacitavam')}</div>
