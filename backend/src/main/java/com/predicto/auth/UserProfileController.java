@@ -75,6 +75,7 @@ public class UserProfileController {
         map.put("balance", wallet != null ? wallet.getBalance() : 0);
         map.put("lolElo", wallet != null ? wallet.getLolElo() : 0);
         map.put("cs2Elo", wallet != null ? wallet.getCs2Elo() : 0);
+        map.put("academyXp", wallet != null ? wallet.getAcademyXp() : 0);
         map.put("totalPredictions", totalBets);
         map.put("wonPredictions", wonBets);
         map.put("winRate", winRate);
