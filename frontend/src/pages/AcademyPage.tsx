@@ -5,7 +5,7 @@ const sports = [
   {
     key: "CS2",
     name: "Counter-Strike 2",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Counter-Strike_2_logo.svg/2560px-Counter-Strike_2_logo.svg.png",
+    logo: "https://cdn.cloudflare.steamstatic.com/apps/csgo/images/csgo_react/global/logo_cs_sm.svg",
     description: "Od základných pravidiel až po taktické princípy profesionálneho CS2.",
     color: "#f59e0b"
   },
