@@ -1,6 +1,5 @@
 package com.predicto.betting;
 
-import com.predicto.auth.UserRepository;
 import com.predicto.betting.Bet;
 import com.predicto.betting.BetRepository;
 import com.predicto.catalog.Match;
@@ -24,16 +23,13 @@ public class OddsCalculationService {
     private static final double MAX_ODDS = 9.99;
 
     private final MatchRepository matchRepository;
-    private final MatchOddsRepository matchOddsRepository;
     private final BetRepository betRepository;
     private final OddsSaverService oddsSaverService;
 
     public OddsCalculationService(MatchRepository matchRepository,
-                                   MatchOddsRepository matchOddsRepository,
                                    BetRepository betRepository,
                                    OddsSaverService oddsSaverService) {
         this.matchRepository = matchRepository;
-        this.matchOddsRepository = matchOddsRepository;
         this.betRepository = betRepository;
         this.oddsSaverService = oddsSaverService;
     }
@@ -58,10 +54,7 @@ public class OddsCalculationService {
             match.getId(), betsA.size(), betsB.size(), weightA, weightB, totalWeight);
 
         if (totalWeight == 0) {
-            boolean hasOddsA = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), teamA.getId()).isPresent();
-            if (!hasOddsA) {
-                oddsSaverService.saveOdds(match, teamA, oddsA, teamB, oddsB);
-            }
+            oddsSaverService.saveOdds(match, teamA, oddsA, teamB, oddsB);
             return;
         }
 
