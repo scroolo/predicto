@@ -34,7 +34,7 @@ CREATE TABLE quiz_questions (
     option_b VARCHAR(500) NOT NULL,
     option_c VARCHAR(500) NOT NULL,
     option_d VARCHAR(500) NOT NULL,
-    correct_option CHAR(1) NOT NULL,
+    correct_option VARCHAR(10) NOT NULL,
     sort_order INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

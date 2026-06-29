@@ -32,7 +32,7 @@ public class QuizQuestion extends BaseEntity {
     @Column(nullable = false)
     private String optionD;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10)
     private String correctOption;
 
     @Column(nullable = false)
