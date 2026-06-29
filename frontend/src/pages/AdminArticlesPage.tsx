@@ -221,6 +221,7 @@ export default function AdminArticlesPage() {
               <select className="select-field" value={game} onChange={(e) => setGame(e.target.value)}>
                 <option value="LOL">{t('admin.lol')}</option>
                 <option value="CS2">{t('admin.cs2')}</option>
+                <option value="F1">Formula 1</option>
                 <option value="ALL">{t('admin.all')}</option>
               </select>
             </div>
