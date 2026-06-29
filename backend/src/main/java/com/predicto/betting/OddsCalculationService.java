@@ -93,6 +93,11 @@ public class OddsCalculationService {
         saveOddsForTeam(match, teamB, oddsB);
     }
 
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
+    public void calculateAndSaveOddsInNewTransaction(Match match) {
+        calculateAndSaveOdds(match);
+    }
+
     private void saveOddsForTeam(Match match, Team team, double oddsValue) {
         try {
             MatchOdds odds = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), team.getId())
