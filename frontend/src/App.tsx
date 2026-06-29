@@ -94,9 +94,6 @@ export default function App() {
         <Route path="/admin/f1" element={
           <AdminRoute requiredRole="ADMIN"><AdminLayout><AdminF1Page /></AdminLayout></AdminRoute>
         } />
-        <Route path="/admin/academy" element={
-          <AdminRoute requiredRole="ADMIN"><AdminLayout><AdminAcademyPage /></AdminLayout></AdminRoute>
-        } />
         <Route path="/f1" element={<F1Page />} />
         <Route path="/f1/meetings/:id" element={<F1MeetingPage />} />
         <Route path="/f1/sessions/:id" element={<F1SessionPage />} />
@@ -105,6 +102,9 @@ export default function App() {
         <Route path="/academy/:sport/course/:courseId" element={<AcademyLessonListPage />} />
         <Route path="/academy/:sport" element={<AcademyCoursePage />} />
         <Route path="/academy" element={<AcademyPage />} />
+        <Route path="/admin/academy" element={
+          <AdminRoute requiredRole="ADMIN"><AdminLayout><AdminAcademyPage /></AdminLayout></AdminRoute>
+        } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       </PageTransition>
