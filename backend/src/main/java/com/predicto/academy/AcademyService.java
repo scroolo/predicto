@@ -118,15 +118,22 @@ public class AcademyService {
 
         // Check achievements
         long totalCompleted = progressRepository.findByUserIdAndCompletedTrue(userId).size() + 1;
+        log.info("Academy: completeLesson check achievements userId={} totalCompleted={} certificateAwarded={}", userId, totalCompleted, certificateAwarded);
 
         if (totalCompleted == 1) {
+            log.info("Academy: attempting to award achievement academy_first_lesson for userId={}", userId);
             achievementService.awardById(userId, "academy_first_lesson");
+            log.info("Academy: achievement award call completed for academy_first_lesson");
         }
         if (totalCompleted >= 10) {
+            log.info("Academy: attempting to award achievement academy_10_lessons for userId={}", userId);
             achievementService.awardById(userId, "academy_10_lessons");
+            log.info("Academy: achievement award call completed for academy_10_lessons");
         }
         if (certificateAwarded) {
+            log.info("Academy: attempting to award achievement academy_first_course for userId={}", userId);
             achievementService.awardById(userId, "academy_first_course");
+            log.info("Academy: achievement award call completed for academy_first_course");
 
             String category = lesson.getCourse().getCategory().name();
             List<Course> categoryCourses = courseRepository.findByCategoryAndPublishedTrueOrderByLevelAsc(lesson.getCourse().getCategory());
@@ -140,14 +147,22 @@ public class AcademyService {
                     case "F1" -> "academy_f1_complete";
                     default -> null;
                 };
-                if (achievementId != null) achievementService.awardById(userId, achievementId);
+                if (achievementId != null) {
+                    log.info("Academy: attempting to award achievement {} for userId={}", achievementId, userId);
+                    achievementService.awardById(userId, achievementId);
+                    log.info("Academy: achievement award call completed for {}", achievementId);
+                }
 
                 boolean allComplete = List.of(AcademyCategory.LOL, AcademyCategory.CS2, AcademyCategory.F1).stream()
                     .allMatch(cat -> {
                         List<Course> courses = courseRepository.findByCategoryAndPublishedTrueOrderByLevelAsc(cat);
                         return courses.stream().allMatch(c -> certificateRepository.existsByUserIdAndCourseId(userId, c.getId()));
                     });
-                if (allComplete) achievementService.awardById(userId, "academy_all_complete");
+                if (allComplete) {
+                    log.info("Academy: attempting to award achievement academy_all_complete for userId={}", userId);
+                    achievementService.awardById(userId, "academy_all_complete");
+                    log.info("Academy: achievement award call completed for academy_all_complete");
+                }
             }
         }
 
