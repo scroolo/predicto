@@ -18,7 +18,6 @@ export default function OddsButton({ label, odds, selected, onClick, size = 'md'
       }`}
     >
       <span className={`leading-tight ${size === 'sm' ? 'text-[10px]' : 'text-xs'}`}>{label}</span>
-      <span className={`font-mono ${size === 'sm' ? 'text-sm' : 'text-base'}`}>{odds.toFixed(2)}</span>
     </button>
   )
 }

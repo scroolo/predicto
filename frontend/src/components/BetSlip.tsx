@@ -44,12 +44,6 @@ export default function BetSlip({
                 <span className="text-text-secondary">{t('match.winner')}</span>
                 <span className="font-medium">{winnerTeam}</span>
               </div>
-              {winnerOdds && (
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">{t('match.odds')}</span>
-                  <span className="font-mono">{winnerOdds.toFixed(2)}</span>
-                </div>
-              )}
               {wReturn > 0 && (
                 <div className="flex justify-between">
                   <span className="text-text-secondary">{t('match.return')}</span>
@@ -64,12 +58,6 @@ export default function BetSlip({
                 <span className="text-text-secondary">{t('match.score')}</span>
                 <span className="font-medium">{exactScore}</span>
               </div>
-              {scoreOdds && (
-                <div className="flex justify-between">
-                  <span className="text-text-secondary">{t('match.odds')}</span>
-                  <span className="font-mono">{scoreOdds.toFixed(2)}</span>
-                </div>
-              )}
               {sReturn > 0 && (
                 <div className="flex justify-between">
                   <span className="text-text-secondary">{t('match.return')}</span>
