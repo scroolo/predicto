@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class GeminiLessonService {
 
-    @Value("${gemini.api.key:}")
+    @Value("${anthropic.api.key:}")
     private String apiKey;
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -24,7 +24,7 @@ public class GeminiLessonService {
 
     public GeminiLessonResult generateLesson(String topic, AcademyCategory category, AcademyLevel level) {
         if (apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException("GEMINI_API_KEY not configured");
+            throw new IllegalStateException("ANTHROPIC_API_KEY not configured");
         }
 
         String categoryName = switch (category) {
@@ -44,10 +44,10 @@ public class GeminiLessonService {
             Vytvor lekciu v SLOVENSKOM jazyku na tému: "%s"
             Šport: %s
             Úroveň: %s
-
+            
             Lekcia musí byť zaujímavá, praktická a zrozumiteľná.
-            Dĺžka obsahu: 300-5000 slov podľa náročnosti témy. Jednoduchšie témy 300-1500 slov, náročnejšie témy ktoré potrebujú detailné vysvetlenie môžu mať až 5000 slov.
-
+            Dĺžka obsahu: 300-2000 slov podľa náročnosti témy.
+            
             Odpovedz PRESNE v tomto formáte bez akýchkoľvek iných slov:
             TITLE: [názov lekcie]
             SUMMARY: [1-2 vety zhrnutie]
@@ -80,40 +80,41 @@ public class GeminiLessonService {
             """.formatted(topic, categoryName, levelName);
 
         try {
-            String requestBody = """
-                {
-                    "contents": [{
-                        "parts": [{"text": %s}]
-                    }]
-                }
-                """.formatted(objectMapper.writeValueAsString(prompt));
+            String requestBody = objectMapper.writeValueAsString(new java.util.HashMap<>() {{
+                put("model", "claude-haiku-4-5");
+                put("max_tokens", 4000);
+                put("messages", List.of(new java.util.HashMap<>() {{
+                    put("role", "user");
+                    put("content", prompt);
+                }}));
+            }});
 
             HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey))
+                .uri(URI.create("https://api.anthropic.com/v1/messages"))
                 .header("Content-Type", "application/json")
+                .header("x-api-key", apiKey)
+                .header("anthropic-version", "2023-06-01")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                throw new RuntimeException("Gemini API error: " + response.statusCode() + " " + response.body());
+                throw new RuntimeException("Claude API error: " + response.statusCode() + " " + response.body());
             }
 
             var root = objectMapper.readTree(response.body());
-            String text = root.path("candidates").get(0)
-                .path("content").path("parts").get(0)
-                .path("text").asText();
+            String text = root.path("content").get(0).path("text").asText();
 
-            return parseGeminiResponse(text);
+            return parseResponse(text);
 
         } catch (Exception e) {
-            log.error("Gemini lesson generation failed: {}", e.getMessage(), e);
+            log.error("Lesson generation failed: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to generate lesson: " + e.getMessage());
         }
     }
 
-    private GeminiLessonResult parseGeminiResponse(String text) {
+    private GeminiLessonResult parseResponse(String text) {
         String title = extractLine(text, "TITLE:");
         String summary = extractLine(text, "SUMMARY:");
         String content = extractContent(text);
