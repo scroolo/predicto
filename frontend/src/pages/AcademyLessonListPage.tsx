@@ -24,10 +24,11 @@ export default function AcademyLessonListPage() {
 
   useEffect(() => {
     if (!courseId) return;
-    Promise.all([
-      fetch(`/api/academy/courses`).then(r => r.json()),
-      fetch(`/api/academy/courses/${courseId}/lessons`).then(r => r.json())
-    ]).then(async ([courses, lessons]) => {
+    const loadData = async () => {
+      const [courses, lessons] = await Promise.all([
+        fetch(`/api/academy/courses`).then(r => r.json()),
+        fetch(`/api/academy/courses/${courseId}/lessons`).then(r => r.json())
+      ]);
       const course = courses.find((c: any) => c.id === courseId);
       if (course) setCourseTitle(course.title);
       setLessons(lessons);
@@ -41,7 +42,8 @@ export default function AcademyLessonListPage() {
       } catch (e) {}
 
       setLoading(false);
-    });
+    };
+    loadData();
   }, [courseId]);
 
   if (loading) return <div style={{ color: "white", padding: "2rem", textAlign: "center" }}>Načítavam...</div>;
