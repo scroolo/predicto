@@ -15,6 +15,7 @@ import java.util.UUID;
 public class AcademyController {
 
     private final AcademyService academyService;
+    private final LessonRepository lessonRepository;
 
     @GetMapping("/courses")
     public ResponseEntity<List<Course>> getCourses() {
@@ -29,6 +30,13 @@ public class AcademyController {
     @GetMapping("/courses/{courseId}/lessons")
     public ResponseEntity<List<Lesson>> getLessons(@PathVariable UUID courseId) {
         return ResponseEntity.ok(academyService.getLessonsForCourse(courseId));
+    }
+
+    @GetMapping("/lessons/{lessonId}")
+    public ResponseEntity<Lesson> getLesson(@PathVariable UUID lessonId) {
+        return lessonRepository.findById(lessonId)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/lessons/{lessonId}/quiz")
