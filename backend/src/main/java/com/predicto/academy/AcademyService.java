@@ -1,5 +1,6 @@
 package com.predicto.academy;
 
+import com.predicto.achievement.AchievementService;
 import com.predicto.auth.User;
 import com.predicto.auth.UserRepository;
 import com.predicto.auth.security.JwtUser;
@@ -26,6 +27,7 @@ public class AcademyService {
     private final UserCertificateRepository certificateRepository;
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
+    private final AchievementService achievementService;
 
     @Transactional(readOnly = true)
     public List<Course> getPublishedCourses() {
@@ -113,6 +115,42 @@ public class AcademyService {
         }
 
         log.info("Lesson completed: userId={} lessonId={} xp={} quizScore={}", userId, lessonId, xp, quizScore);
+
+        // Check achievements
+        long totalCompleted = progressRepository.findByUserIdAndCompletedTrue(userId).size() + 1;
+
+        if (totalCompleted == 1) {
+            achievementService.awardById(userId, "academy_first_lesson");
+        }
+        if (totalCompleted >= 10) {
+            achievementService.awardById(userId, "academy_10_lessons");
+        }
+        if (certificateAwarded) {
+            achievementService.awardById(userId, "academy_first_course");
+
+            String category = lesson.getCourse().getCategory().name();
+            List<Course> categoryCourses = courseRepository.findByCategoryAndPublishedTrueOrderByLevelAsc(lesson.getCourse().getCategory());
+            long completedCategoryCourses = categoryCourses.stream()
+                .filter(c -> certificateRepository.existsByUserIdAndCourseId(userId, c.getId()))
+                .count();
+            if (completedCategoryCourses >= categoryCourses.size()) {
+                String achievementId = switch (category) {
+                    case "LOL" -> "academy_lol_complete";
+                    case "CS2" -> "academy_cs2_complete";
+                    case "F1" -> "academy_f1_complete";
+                    default -> null;
+                };
+                if (achievementId != null) achievementService.awardById(userId, achievementId);
+
+                boolean allComplete = List.of(AcademyCategory.LOL, AcademyCategory.CS2, AcademyCategory.F1).stream()
+                    .allMatch(cat -> {
+                        List<Course> courses = courseRepository.findByCategoryAndPublishedTrueOrderByLevelAsc(cat);
+                        return courses.stream().allMatch(c -> certificateRepository.existsByUserIdAndCourseId(userId, c.getId()));
+                    });
+                if (allComplete) achievementService.awardById(userId, "academy_all_complete");
+            }
+        }
+
         return new CompleteLessonResponse(xp, quizScore, certificateAwarded);
     }
 }
