@@ -88,11 +88,29 @@ export default function ArticleListPage() {
     >
       {article.coverImageUrl ? (
         <img src={article.coverImageUrl} alt={article.title} className="w-[120px] h-[80px] object-cover rounded-lg shrink-0" />
-      ) : (
-        <div className="w-[120px] h-[80px] rounded-lg shrink-0 flex items-center justify-center bg-gradient-to-br from-[#1e2d45] to-[#111827] text-xs font-semibold text-text-secondary">
-          {categoryNames[article.category] || article.category}
-        </div>
-      )}
+) : (
+  <div style={{
+    width: 120, height: 80, borderRadius: 8, flexShrink: 0, overflow: "hidden", position: "relative"
+  }}>
+    {article.game === "LOL" && (
+      <img src="https://i0.wp.com/highschool.latimes.com/wp-content/uploads/2021/09/league-of-legends.jpeg?fit=1200%2C668&ssl=1" 
+        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="LOL" />
+    )}
+    {article.game === "CS2" && (
+      <img src="https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg" 
+        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="CS2" />
+    )}
+    {article.game === "F1" && (
+      <img src="https://images.ctfassets.net/gy95mqeyjg28/4DCWEw7FYzoky73roJSLpZ/16228392768ba87c63147fee8d390e5b/launch_2026_mcl40_desktop-2.png?w=3840&q=75&fm=webp&fit=fill" 
+        style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="F1" />
+    )}
+    {(!article.game || (article.game !== "LOL" && article.game !== "CS2" && article.game !== "F1")) && (
+      <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #1e2d45, #111827)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: "#94a3b8" }}>
+        {categoryNames[article.category] || article.category}
+      </div>
+    )}
+  </div>
+)}
       <div className="flex flex-col justify-between min-w-0 flex-1">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
