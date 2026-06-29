@@ -1,21 +1,17 @@
 package com.predicto.betting;
 
-import com.predicto.auth.User;
 import com.predicto.auth.UserRepository;
 import com.predicto.betting.Bet;
 import com.predicto.betting.BetRepository;
 import com.predicto.catalog.Match;
 import com.predicto.catalog.MatchRepository;
 import com.predicto.catalog.Team;
-import com.predicto.common.enums.UserRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,34 +25,28 @@ public class OddsCalculationService {
 
     private final MatchRepository matchRepository;
     private final MatchOddsRepository matchOddsRepository;
-    private final UserRepository userRepository;
     private final BetRepository betRepository;
-
-    private User adminUser;
+    private final OddsSaverService oddsSaverService;
 
     public OddsCalculationService(MatchRepository matchRepository,
                                    MatchOddsRepository matchOddsRepository,
-                                   UserRepository userRepository,
-                                   BetRepository betRepository) {
+                                   BetRepository betRepository,
+                                   OddsSaverService oddsSaverService) {
         this.matchRepository = matchRepository;
         this.matchOddsRepository = matchOddsRepository;
-        this.userRepository = userRepository;
         this.betRepository = betRepository;
+        this.oddsSaverService = oddsSaverService;
     }
 
-    @Transactional
     public void calculateAndSaveOdds(Match match) {
         if (match.getTeamA() == null || match.getTeamB() == null) return;
-        resolveAdminUser();
 
         Team teamA = match.getTeamA();
         Team teamB = match.getTeamB();
 
-        // Base odds
         double oddsA = 1.85;
         double oddsB = 1.85;
 
-        // Fetch current bets — weighted by sqrt(stake) to prevent whale manipulation
         List<Bet> betsA = betRepository.findPendingByMatchAndTeam(match.getId(), teamA.getId());
         List<Bet> betsB = betRepository.findPendingByMatchAndTeam(match.getId(), teamB.getId());
 
@@ -70,13 +60,11 @@ public class OddsCalculationService {
         if (totalWeight == 0) {
             boolean hasOddsA = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), teamA.getId()).isPresent();
             if (!hasOddsA) {
-                saveOddsForTeam(match, teamA, oddsA);
-                saveOddsForTeam(match, teamB, oddsB);
+                oddsSaverService.saveOdds(match, teamA, oddsA, teamB, oddsB);
             }
             return;
         }
 
-        // Has bets — calculate popularity-based odds
         double popularityA = weightA / totalWeight;
         double popularityB = weightB / totalWeight;
 
@@ -89,39 +77,7 @@ public class OddsCalculationService {
         log.info("Match {}: popularityA={} popularityB={} -> oddsA={} oddsB={}",
             match.getId(), popularityA, popularityB, oddsA, oddsB);
 
-        saveOddsForTeam(match, teamA, oddsA);
-        saveOddsForTeam(match, teamB, oddsB);
-    }
-
-    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
-    public void calculateAndSaveOddsInNewTransaction(Match match) {
-        calculateAndSaveOdds(match);
-    }
-
-    private void saveOddsForTeam(Match match, Team team, double oddsValue) {
-        try {
-            MatchOdds odds = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), team.getId())
-                .orElse(MatchOdds.builder()
-                    .match(match)
-                    .team(team)
-                    .build());
-            odds.setOddsValue(BigDecimal.valueOf(oddsValue));
-            odds.setSetByUser(adminUser);
-            odds.setUpdatedAt(OffsetDateTime.now());
-            matchOddsRepository.save(odds);
-            log.info("Saved odds successfully: match={} team={} odds={}", match.getId(), team.getId(), oddsValue);
-        } catch (Exception e) {
-            log.error("Failed to save odds: match={} team={} odds={} error={}", match.getId(), team.getId(), oddsValue, e.getMessage(), e);
-        }
-    }
-
-    private void resolveAdminUser() {
-        if (adminUser != null) return;
-        List<User> admins = userRepository.findByRole(UserRole.ADMIN);
-        if (admins.isEmpty()) {
-            throw new IllegalStateException("No ADMIN user found — cannot set odds setByUser");
-        }
-        adminUser = admins.get(0);
+        oddsSaverService.saveOdds(match, teamA, oddsA, teamB, oddsB);
     }
 
     private static double round(double value) {

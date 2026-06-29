@@ -154,7 +154,7 @@ public class BettingService {
                 .build();
 
         betRepository.save(bet);
-        oddsCalculationService.calculateAndSaveOddsInNewTransaction(match);
+        oddsCalculationService.calculateAndSaveOdds(match);
         achievementService.checkAndAward(user.getId(), "bet_placed");
         return BetResponse.from(bet);
     }
