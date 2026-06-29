@@ -30,8 +30,8 @@ export default function AcademyPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#0a0a14", color: "white", padding: "2rem" }}>
-      <button onClick={() => window.history.back()}
-        style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", marginBottom: "1rem", fontSize: "0.9rem", display: "block" }}>
+      <button onClick={() => navigate("/")}
+        style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", marginBottom: "1rem", fontSize: "0.9rem", display: "block", padding: "0.5rem 0" }}>
         ← Späť
       </button>
       <div style={{ textAlign: "center", marginBottom: "3rem", maxWidth: 700, margin: "0 auto 3rem" }}>
