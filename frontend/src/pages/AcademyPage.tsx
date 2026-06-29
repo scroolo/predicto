@@ -5,21 +5,21 @@ const sports = [
   {
     key: "CS2",
     name: "Counter-Strike 2",
-    logo: "https://cdn.cloudflare.steamstatic.com/apps/csgo/images/csgo_react/global/logo_cs_sm.svg",
+    logo: "https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/social/cs2.jpg",
     description: "Od základných pravidiel až po taktické princípy profesionálneho CS2.",
     color: "#f59e0b"
   },
   {
     key: "LOL",
     name: "League of Legends",
-    logo: "https://cdn.worldvectorlogo.com/logos/league-of-legends-1.svg",
+    logo: "https://i0.wp.com/highschool.latimes.com/wp-content/uploads/2021/09/league-of-legends.jpeg?fit=1200%2C668&ssl=1",
     description: "Kompletné základy aj pokročilé témy o najväčšej MOBA hre na svete.",
     color: "#c89b3c"
   },
   {
     key: "F1",
     name: "Formula 1",
-    logo: "https://cdn.worldvectorlogo.com/logos/formula-1-6.svg",
+    logo: "https://www.stavkovekancelarie.com/res/img/x/articles/f1-2026.260305.jpg",
     description: "Pravidlá, stratégie a fungovanie sveta Formuly 1.",
     color: "#ef4444"
   }
@@ -60,7 +60,7 @@ export default function AcademyPage() {
               e.currentTarget.style.borderColor = "#334155";
               e.currentTarget.style.transform = "translateY(0)";
             }}>
-            <img src={sport.logo} alt={sport.name} style={{ height: 60, objectFit: "contain", marginBottom: "1rem", filter: "brightness(1)" }} />
+            <img src={sport.logo} alt={sport.name} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 8, marginBottom: "1rem" }} />
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.75rem", color: sport.color }}>{sport.name}</h2>
             <p style={{ color: "#94a3b8", fontSize: "0.9rem", lineHeight: 1.6 }}>{sport.description}</p>
             <div style={{ marginTop: "1.5rem", padding: "0.5rem 1.5rem", borderRadius: 20, background: sport.color + "22", color: sport.color, fontWeight: 600, display: "inline-block", fontSize: "0.85rem" }}>
