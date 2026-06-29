@@ -38,15 +38,15 @@ const sportName: Record<string, string> = {
   f1: "Formula 1"
 };
 
-const sportEmoji: Record<string, string> = {
-  cs2: "🔫",
-  lol: "🎮",
-  f1: "🏎️"
+const sportLogo: Record<string, string> = {
+  cs2: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Counter-Strike_2_logo.svg/2560px-Counter-Strike_2_logo.svg.png",
+  lol: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/League_of_Legends_2019_vector.svg/2560px-League_of_Legends_2019_vector.svg.png",
+  f1: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/2560px-F1.svg.png"
 };
 
 const sportColor: Record<string, string> = {
   cs2: "#f59e0b",
-  lol: "#22c55e",
+  lol: "#c89b3c",
   f1: "#ef4444"
 };
 
@@ -104,7 +104,7 @@ export default function AcademyCoursePage() {
       </button>
 
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-        <div style={{ fontSize: "4rem", marginBottom: "0.5rem" }}>{sportEmoji[sport || "cs2"]}</div>
+        <img src={sportLogo[sport || "cs2"]} alt={sportName[sport || "cs2"]} style={{ height: 60, objectFit: "contain", marginBottom: "1rem", filter: "brightness(1)" }} />
         <h1 style={{ fontSize: "2rem", fontWeight: 800, color }}>{sportName[sport || "cs2"]}</h1>
         <p style={{ color: "#94a3b8" }}>Vyber úroveň a začni sa učiť</p>
       </div>

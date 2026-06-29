@@ -5,21 +5,21 @@ const sports = [
   {
     key: "CS2",
     name: "Counter-Strike 2",
-    emoji: "🔫",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Counter-Strike_2_logo.svg/2560px-Counter-Strike_2_logo.svg.png",
     description: "Od základných pravidiel až po taktické princípy profesionálneho CS2.",
     color: "#f59e0b"
   },
   {
     key: "LOL",
     name: "League of Legends",
-    emoji: "🎮",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/League_of_Legends_2019_vector.svg/2560px-League_of_Legends_2019_vector.svg.png",
     description: "Kompletné základy aj pokročilé témy o najväčšej MOBA hre na svete.",
-    color: "#22c55e"
+    color: "#c89b3c"
   },
   {
     key: "F1",
     name: "Formula 1",
-    emoji: "🏎️",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/2560px-F1.svg.png",
     description: "Pravidlá, stratégie a fungovanie sveta Formuly 1.",
     color: "#ef4444"
   }
@@ -60,7 +60,7 @@ export default function AcademyPage() {
               e.currentTarget.style.borderColor = "#334155";
               e.currentTarget.style.transform = "translateY(0)";
             }}>
-            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>{sport.emoji}</div>
+            <img src={sport.logo} alt={sport.name} style={{ height: 60, objectFit: "contain", marginBottom: "1rem", filter: "brightness(1)" }} />
             <h2 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "0.75rem", color: sport.color }}>{sport.name}</h2>
             <p style={{ color: "#94a3b8", fontSize: "0.9rem", lineHeight: 1.6 }}>{sport.description}</p>
             <div style={{ marginTop: "1.5rem", padding: "0.5rem 1.5rem", borderRadius: 20, background: sport.color + "22", color: sport.color, fontWeight: 600, display: "inline-block", fontSize: "0.85rem" }}>
