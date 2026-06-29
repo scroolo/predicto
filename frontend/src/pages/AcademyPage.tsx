@@ -12,14 +12,14 @@ const sports = [
   {
     key: "LOL",
     name: "League of Legends",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/League_of_Legends_2019_vector.svg/2560px-League_of_Legends_2019_vector.svg.png",
+    logo: "https://cdn.worldvectorlogo.com/logos/league-of-legends-1.svg",
     description: "Kompletné základy aj pokročilé témy o najväčšej MOBA hre na svete.",
     color: "#c89b3c"
   },
   {
     key: "F1",
     name: "Formula 1",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/2560px-F1.svg.png",
+    logo: "https://cdn.worldvectorlogo.com/logos/formula-1-6.svg",
     description: "Pravidlá, stratégie a fungovanie sveta Formuly 1.",
     color: "#ef4444"
   }

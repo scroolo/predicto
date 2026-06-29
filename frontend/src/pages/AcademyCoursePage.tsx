@@ -39,9 +39,9 @@ const sportName: Record<string, string> = {
 };
 
 const sportLogo: Record<string, string> = {
-  cs2: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Counter-Strike_2_logo.svg/2560px-Counter-Strike_2_logo.svg.png",
-  lol: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/League_of_Legends_2019_vector.svg/2560px-League_of_Legends_2019_vector.svg.png",
-  f1: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/F1.svg/2560px-F1.svg.png"
+  cs2: "https://cdn.cloudflare.steamstatic.com/apps/csgo/images/csgo_react/global/logo_cs_sm.svg",
+  lol: "https://cdn.worldvectorlogo.com/logos/league-of-legends-1.svg",
+  f1: "https://cdn.worldvectorlogo.com/logos/formula-1-6.svg"
 };
 
 const sportColor: Record<string, string> = {
