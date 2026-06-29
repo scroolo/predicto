@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 public class QuizQuestion extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lesson_id", nullable = false)
     private Lesson lesson;
 
