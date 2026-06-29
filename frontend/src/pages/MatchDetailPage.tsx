@@ -145,6 +145,8 @@ export default function MatchDetailPage() {
       setSuccess(t('matches.predikcia_zrusena')); setExistingBet(null); setWinnerTeamId(''); setStake('')
       setMvpPlayerId(''); setExactScore(''); setScoreStake('')
       await refreshUser()
+      await new Promise(r => setTimeout(r, 500))
+      await fetchData()
     } catch (err: any) { setError(err.response?.data?.message || t('matches.chyba_zrusenie')) }
     finally { setPlacing(false) }
   }
