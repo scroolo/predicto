@@ -67,23 +67,27 @@ public class OddsCalculationService {
         log.info("Match {}: betsA count={} betsB count={} weightA={} weightB={} totalWeight={}",
             match.getId(), betsA.size(), betsB.size(), weightA, weightB, totalWeight);
 
-        if (totalWeight > 0 && (betsA.size() + betsB.size()) >= 1) {
-            double popularityA = weightA / totalWeight;
-            double popularityB = weightB / totalWeight;
-
-            // Max adjustment ±0.30 from base
-            double adjustA = 1.0 + (0.5 - popularityA) * 0.60;
-            double adjustB = 1.0 + (0.5 - popularityB) * 0.60;
-
-            oddsA = clamp(round(oddsA * adjustA));
-            oddsB = clamp(round(oddsB * adjustB));
-
-            log.info("Match {}: popularityA={} popularityB={} adjustA={} adjustB={} -> finalOddsA={} finalOddsB={}",
-                match.getId(), popularityA, popularityB, adjustA, adjustB, oddsA, oddsB);
-
-            log.info("Match {}: betsA={} weightA={} betsB={} weightB={} -> oddsA={} oddsB={}",
-                match.getId(), betsA.size(), weightA, betsB.size(), weightB, oddsA, oddsB);
+        if (totalWeight == 0) {
+            boolean hasOddsA = matchOddsRepository.findByMatchIdAndTeamId(match.getId(), teamA.getId()).isPresent();
+            if (!hasOddsA) {
+                saveOddsForTeam(match, teamA, oddsA);
+                saveOddsForTeam(match, teamB, oddsB);
+            }
+            return;
         }
+
+        // Has bets — calculate popularity-based odds
+        double popularityA = weightA / totalWeight;
+        double popularityB = weightB / totalWeight;
+
+        double adjustA = 1.0 + (0.5 - popularityA) * 0.60;
+        double adjustB = 1.0 + (0.5 - popularityB) * 0.60;
+
+        oddsA = clamp(round(oddsA * adjustA));
+        oddsB = clamp(round(oddsB * adjustB));
+
+        log.info("Match {}: popularityA={} popularityB={} -> oddsA={} oddsB={}",
+            match.getId(), popularityA, popularityB, oddsA, oddsB);
 
         saveOddsForTeam(match, teamA, oddsA);
         saveOddsForTeam(match, teamB, oddsB);
