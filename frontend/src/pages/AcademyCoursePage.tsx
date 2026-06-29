@@ -103,6 +103,12 @@ export default function AcademyCoursePage() {
         ← Späť na Academy
       </button>
 
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem", color: "#94a3b8", fontSize: "0.85rem" }}>
+        <span onClick={() => navigate("/academy")} style={{ cursor: "pointer", color: "#7c3aed" }}>Academy</span>
+        <span>›</span>
+        <span>{sportName[sport || "cs2"]}</span>
+      </div>
+
       <div style={{ textAlign: "center", marginBottom: "3rem" }}>
         <img src={sportLogo[sport || "cs2"]} alt={sportName[sport || "cs2"]} style={{ height: 60, objectFit: "contain", marginBottom: "1rem", filter: "brightness(1)" }} />
         <h1 style={{ fontSize: "2rem", fontWeight: 800, color }}>{sportName[sport || "cs2"]}</h1>

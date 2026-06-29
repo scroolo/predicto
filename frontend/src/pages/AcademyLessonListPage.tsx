@@ -53,6 +53,14 @@ export default function AcademyLessonListPage() {
         ← Späť
       </button>
 
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem", color: "#94a3b8", fontSize: "0.85rem" }}>
+        <span onClick={() => navigate("/academy")} style={{ cursor: "pointer", color: "#7c3aed" }}>Academy</span>
+        <span>›</span>
+        <span onClick={() => navigate(`/academy/${sport}`)} style={{ cursor: "pointer", color: "#7c3aed" }}>{sport?.toUpperCase()}</span>
+        <span>›</span>
+        <span>{courseTitle}</span>
+      </div>
+
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "2rem" }}>{courseTitle}</h1>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

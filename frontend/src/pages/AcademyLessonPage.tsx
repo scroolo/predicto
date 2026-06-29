@@ -90,6 +90,16 @@ export default function AcademyLessonPage() {
         ← Späť na kurz
       </button>
 
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1.5rem", color: "#94a3b8", fontSize: "0.85rem" }}>
+        <span onClick={() => navigate("/academy")} style={{ cursor: "pointer", color: "#7c3aed" }}>Academy</span>
+        <span>›</span>
+        <span onClick={() => navigate(`/academy/${sport}`)} style={{ cursor: "pointer", color: "#7c3aed" }}>{lesson?.course?.category}</span>
+        <span>›</span>
+        <span onClick={() => navigate(`/academy/${sport}/course/${lesson?.course?.id}`)} style={{ cursor: "pointer", color: "#7c3aed" }}>{lesson?.course?.title}</span>
+        <span>›</span>
+        <span>{lesson?.title}</span>
+      </div>
+
       <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "0.5rem" }}>{lesson.title}</h1>
       <p style={{ color: "#94a3b8", marginBottom: "2rem" }}>{lesson.summary}</p>
 
