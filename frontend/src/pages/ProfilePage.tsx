@@ -194,6 +194,14 @@ export default function ProfilePage() {
         ))}
       </div>
 
+      <div style={{ background: "#1e1e2e", borderRadius: 10, padding: "1rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
+        <span style={{ fontSize: "1.5rem" }}>🎓</span>
+        <div>
+          <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>Academy XP</div>
+          <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "#a78bfa" }}>{profile.academyXp ?? 0} XP</div>
+        </div>
+      </div>
+
       {/* ACHIEVEMENTS */}
       <div className="mt-8">
         <h2 className="text-xl font-bold mb-4">Achievementy</h2>
