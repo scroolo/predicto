@@ -40,6 +40,10 @@ public class Wallet extends BaseEntity {
     @Builder.Default
     private Integer cs2Elo = 100;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private Integer academyXp = 0;
+
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
