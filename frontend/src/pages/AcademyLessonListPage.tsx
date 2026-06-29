@@ -33,10 +33,10 @@ export default function AcademyLessonListPage() {
       setLessons(lessons);
 
       try {
-        const res = await fetch("/api/academy/progress", { credentials: "include" });
+        const res = await fetch("/api/academy/progress/lessons", { credentials: "include" });
         if (res.ok) {
-          const progress = await res.json();
-          setCompletedIds(progress.certificates?.map((c: any) => c.course?.id) || []);
+          const ids: string[] = await res.json();
+          setCompletedIds(ids);
         }
       } catch (e) {}
 

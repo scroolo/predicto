@@ -16,6 +16,6 @@ public interface UserLessonProgressRepository extends JpaRepository<UserLessonPr
     @Query("SELECT COUNT(p) FROM UserLessonProgress p WHERE p.user.id = :userId AND p.lesson.course.id = :courseId AND p.completed = true")
     long countCompletedLessonsByCourse(@Param("userId") UUID userId, @Param("courseId") UUID courseId);
 
-    @Query("SELECT COALESCE(SUM(p.xpEarned), 0) FROM UserLessonProgress p WHERE p.user.id = :userId")
-    Integer sumXpEarnedByUser(@Param("userId") UUID userId);
+    @Query("SELECT p.lesson.id FROM UserLessonProgress p WHERE p.user.id = :userId AND p.completed = true")
+    List<UUID> findCompletedLessonIdsByUserId(@Param("userId") UUID userId);
 }

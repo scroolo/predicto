@@ -16,6 +16,7 @@ public class AcademyController {
 
     private final AcademyService academyService;
     private final LessonRepository lessonRepository;
+    private final UserLessonProgressRepository progressRepository;
 
     @GetMapping("/courses")
     public ResponseEntity<List<Course>> getCourses() {
@@ -48,6 +49,12 @@ public class AcademyController {
     public ResponseEntity<AcademyProgressResponse> getProgress(
             @AuthenticationPrincipal JwtUser jwtUser) {
         return ResponseEntity.ok(academyService.getUserProgress(jwtUser.id()));
+    }
+
+    @GetMapping("/progress/lessons")
+    public ResponseEntity<List<UUID>> getCompletedLessonIds(@AuthenticationPrincipal JwtUser jwtUser) {
+        if (jwtUser == null) return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(progressRepository.findCompletedLessonIdsByUserId(jwtUser.id()));
     }
 
     @PostMapping("/lessons/{lessonId}/complete")
