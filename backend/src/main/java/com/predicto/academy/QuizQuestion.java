@@ -20,19 +20,19 @@ public class QuizQuestion extends BaseEntity {
     @Column(nullable = false)
     private String question;
 
-    @Column(nullable = false)
+    @Column(name = "option_a", nullable = false)
     private String optionA;
 
-    @Column(nullable = false)
+    @Column(name = "option_b", nullable = false)
     private String optionB;
 
-    @Column(nullable = false)
+    @Column(name = "option_c", nullable = false)
     private String optionC;
 
-    @Column(nullable = false)
+    @Column(name = "option_d", nullable = false)
     private String optionD;
 
-    @Column(nullable = false, length = 10)
+    @Column(name = "correct_option", nullable = false, length = 10)
     private String correctOption;
 
     @Column(nullable = false)
