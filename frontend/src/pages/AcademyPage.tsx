@@ -30,6 +30,10 @@ export default function AcademyPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#0a0a14", color: "white", padding: "2rem" }}>
+      <button onClick={() => window.history.back()}
+        style={{ background: "none", border: "none", color: "#94a3b8", cursor: "pointer", marginBottom: "1rem", fontSize: "0.9rem", display: "block" }}>
+        ← Späť
+      </button>
       <div style={{ textAlign: "center", marginBottom: "3rem", maxWidth: 700, margin: "0 auto 3rem" }}>
         <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: "0.75rem" }}>
           🎓 Predicto Academy
