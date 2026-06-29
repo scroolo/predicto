@@ -16,7 +16,7 @@ public class AdminAcademyController {
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
     private final QuizQuestionRepository quizQuestionRepository;
-    private final GeminiLessonService geminiLessonService;
+    private final ClaudeLessonService claudeLessonService;
 
     @GetMapping("/courses")
     public ResponseEntity<List<Course>> listCourses() {
@@ -60,7 +60,7 @@ public class AdminAcademyController {
         var course = courseRepository.findById(courseId).orElse(null);
         if (course == null) return ResponseEntity.notFound().build();
 
-        var result = geminiLessonService.generateLesson(req.topic(), course.getCategory(), course.getLevel());
+        var result = claudeLessonService.generateLesson(req.topic(), course.getCategory(), course.getLevel());
 
         Lesson lesson = Lesson.builder()
                 .course(course)

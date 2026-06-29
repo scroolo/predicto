@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class GeminiLessonService {
+public class ClaudeLessonService {
 
     @Value("${anthropic.api.key:}")
     private String apiKey;
