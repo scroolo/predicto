@@ -5,5 +5,7 @@ import java.util.List;
 public record AcademyProgressResponse(
     int completedLessons,
     int totalXp,
-    List<UserCertificate> certificates
-) {}
+    List<CertificateDto> certificates
+) {
+    public record CertificateDto(String courseId, String courseTitle) {}
+}

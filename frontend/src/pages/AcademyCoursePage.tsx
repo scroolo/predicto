@@ -21,7 +21,7 @@ interface Lesson {
 interface Progress {
   completedLessons: number;
   totalXp: number;
-  certificates: { course: { id: string } }[];
+  certificates: { courseId: string; courseTitle: string }[];
 }
 
 const levelLabel: Record<string, string> = {
@@ -83,7 +83,7 @@ export default function AcademyCoursePage() {
           if (res.ok) {
             setIsLoggedIn(true);
             const progress: Progress = await res.json();
-            setCertificates(progress.certificates.map(cert => cert.course.id));
+            setCertificates(progress.certificates.map((cert: any) => cert.courseId));
           }
         } catch (e) {}
 

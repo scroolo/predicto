@@ -47,7 +47,13 @@ public class AcademyService {
         List<UserLessonProgress> completed = progressRepository.findByUserIdAndCompletedTrue(userId);
         List<UserCertificate> certificates = certificateRepository.findByUserId(userId);
         Integer totalXp = progressRepository.sumXpEarnedByUser(userId);
-        return new AcademyProgressResponse(completed.size(), totalXp != null ? totalXp : 0, certificates);
+        var certDtos = certificates.stream()
+            .map(c -> new AcademyProgressResponse.CertificateDto(
+                c.getCourse().getId().toString(),
+                c.getCourse().getTitle()
+            ))
+            .toList();
+        return new AcademyProgressResponse(completed.size(), totalXp != null ? totalXp : 0, certDtos);
     }
 
     @Transactional
