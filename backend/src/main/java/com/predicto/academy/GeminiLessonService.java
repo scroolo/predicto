@@ -46,7 +46,7 @@ public class GeminiLessonService {
             Úroveň: %s
 
             Lekcia musí byť zaujímavá, praktická a zrozumiteľná.
-            Dĺžka obsahu: 300-500 slov.
+            Dĺžka obsahu: 300-5000 slov podľa náročnosti témy. Jednoduchšie témy 300-1500 slov, náročnejšie témy ktoré potrebujú detailné vysvetlenie môžu mať až 5000 slov.
 
             Odpovedz PRESNE v tomto formáte bez akýchkoľvek iných slov:
             TITLE: [názov lekcie]
