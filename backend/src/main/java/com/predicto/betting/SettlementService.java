@@ -35,7 +35,7 @@ public class SettlementService {
             int pointsAwarded = 0;
             int payout = 0;
 
-            if (bet.getWinnerTeam() != null
+            if (bet.getWinnerTeam() != null && match.getResultWinnerTeam() != null
                     && bet.getWinnerTeam().getId().equals(match.getResultWinnerTeam().getId())) {
                 pointsAwarded += 1;
                 payout += (int) Math.floor(bet.getStake() * bet.getWinnerOddsSnapshot().doubleValue());

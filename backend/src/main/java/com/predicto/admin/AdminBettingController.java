@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +57,7 @@ public class AdminBettingController {
     }
 
     @PostMapping("/{matchId}/confirm-result")
+    @Transactional
     public ResponseEntity<?> confirmResult(
             @PathVariable UUID matchId,
             @Valid @RequestBody ConfirmResultRequest request) {
@@ -94,6 +96,7 @@ public class AdminBettingController {
     }
 
     @PostMapping("/{matchId}/cancel")
+    @Transactional
     public ResponseEntity<?> cancelMatch(@PathVariable UUID matchId) {
         currentUser();
         Match match = matchRepository.findById(matchId)

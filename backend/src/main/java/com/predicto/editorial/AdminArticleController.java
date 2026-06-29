@@ -219,9 +219,9 @@ public class AdminArticleController {
     @PatchMapping("/{id}/feature")
     @Transactional
     public ResponseEntity<?> toggleFeature(@PathVariable UUID id) {
-        int updated = entityManager.createNativeQuery(
-            "UPDATE articles SET featured = NOT featured WHERE id = ?"
-        ).setParameter(1, id).executeUpdate();
+        int updated = entityManager.createQuery(
+            "UPDATE Article a SET a.featured = NOT a.featured WHERE a.id = :id"
+        ).setParameter("id", id).executeUpdate();
         if (updated == 0) return ResponseEntity.notFound().build();
         var articles = entityManager.createQuery(
             "SELECT a FROM Article a WHERE a.id = :id", Article.class
